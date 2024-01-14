@@ -1,10 +1,11 @@
 using Domain.Entities.Inharitance;
 using Microsoft.EntityFrameworkCore;
 using Apllication.Repositories;
+using Domain.Entities;
 
 namespace Persistence.Data.Repositories;
 
-class QuestionRepository : GenericRepository<BaseQuestion>, IQuestionRepository
+public class QuestionRepository : GenericRepository<BaseQuestion>, IQuestionRepository
 {
     private readonly DataContext _context;
     public QuestionRepository(DataContext context) : base(context)
@@ -12,12 +13,15 @@ class QuestionRepository : GenericRepository<BaseQuestion>, IQuestionRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<BaseQuestion?>> GetAllWithAuthor()
+    public async Task<IEnumerable<MultipleChoicesQuestion?>> GetAllMultiple()
     {
         if (_context.Questions != null)
         {
-            IEnumerable<BaseQuestion?> questions = await _context.Questions
-              //.Include(q => q.CreatedBy)
+            IEnumerable<MultipleChoicesQuestion?> questions = await _context.MultipleChoiceQuestions
+              .Include(q => q.ChoiceA)
+              .Include(q => q.ChoiceB)
+              .Include(q => q.ChoiceC)
+              .Include(q => q.ChoiceD)
               .AsQueryable()
               .ToListAsync();
 

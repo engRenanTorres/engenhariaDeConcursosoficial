@@ -1,4 +1,4 @@
-using DotnetAPI.Models;
+/*using DotnetAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotnetAPI.Data.Repositories;
@@ -57,4 +57,4 @@ class UserRepository : IUserRepository
         }
         throw new Exception("Users repo is not set");
     }
-}
+}*/

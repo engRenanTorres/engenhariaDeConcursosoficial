@@ -1,4 +1,4 @@
-using DotnetAPI.Models;
+/*using DotnetAPI.Models;
 
 namespace DotnetAPI.Data.Repositories;
 public interface IUserRepository
@@ -9,4 +9,4 @@ public interface IUserRepository
     public Task<IEnumerable<User?>> GetAllUsers();
     public Task<User?> GetSingleUser(int id);
     public Task<User?> GetSingleUserByEmail(string email);
-}
+}*/

@@ -1,5 +1,7 @@
+using Apllication.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
+using Persistence.Data.Repositories;
 using Persistence.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +34,17 @@ builder.Services.AddCors((options) =>
         .AllowCredentials();
     });
 });
+
+
+//builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+
+//Services
+//builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddScoped<IQuestionService, QuestionService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
