@@ -11,7 +11,7 @@ using Persistence.Data;
 
 namespace Persistence.Migrations
 {
-    [DbContext(typeof(DataContextEF))]
+    [DbContext(typeof(DataContext))]
     [Migration("20240114002707_InitialCreate")]
     partial class InitialCreate
     {

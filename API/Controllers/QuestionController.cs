@@ -10,11 +10,11 @@ public class QuestionController : ControllerBase
 {
 
     private readonly ILogger<QuestionController> _logger;
-    private readonly DataContextEF _dataContextEF;
+    private readonly DataContext _dataContextEF;
 
     public QuestionController(
         ILogger<QuestionController> logger,
-        DataContextEF dataContextEF
+        DataContext dataContextEF
         )
     {
         _logger = logger;

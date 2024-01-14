@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Apllication.Repositories;
 
 namespace Domain.Entities.Inharitance
 {
-    public abstract class BaseQuestion
+    public abstract class BaseQuestion : IEntity
     {
         [Key]
         public int Id { get; set; }

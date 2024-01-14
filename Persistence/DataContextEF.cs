@@ -3,10 +3,10 @@ using Domain.Entities.Inharitance;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Data;
-public class DataContextEF : DbContext
+public class DataContext : DbContext
 {
 
-  public DataContextEF(DbContextOptions<DataContextEF> options) : base(options)
+  public DataContext(DbContextOptions<DataContext> options) : base(options)
   {
     // _conectionString = config.GetConnectionString("DefaultConnection");
   }

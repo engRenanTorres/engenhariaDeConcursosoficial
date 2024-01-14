@@ -5,7 +5,7 @@ using Persistence.Data;
 namespace Persistence.Seed;
 public class Seed
 {
-  public static async Task SeedData(DataContextEF contextEF)
+  public static async Task SeedData(DataContext contextEF)
   {
     if (contextEF.Questions.Any()) return;
 
