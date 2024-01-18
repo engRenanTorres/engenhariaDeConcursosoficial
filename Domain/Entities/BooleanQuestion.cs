@@ -1,23 +1,27 @@
-
-using Domain.Entities.Inharitance;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Entities.Inharitance;
 
 namespace Domain.Entities;
+
 public class BooleanQuestion : BaseQuestion
 {
-    private Choice _ChoiceA = new()
+    public BooleanQuestion()
     {
-        Letter = 'A',
-        Text = "Verdadeiro",
-    };
-    private Choice _ChoiceB = new()
-    {
-        Letter = 'B',
-        Text = "Falso"
-    };
+        _choices = new List<Choice>
+        {
+            new() { Letter = 'A', Text = "Verdadeiro" },
+            new() { Letter = 'B', Text = "Falso" }
+        };
+    }
 
-    public override ICollection<Choice?> Choices
+    public override ICollection<Choice> Choices
     {
-        get => new[] { _ChoiceA, _ChoiceB };
+        get => _choices;
+        set =>
+            _choices = new List<Choice>
+            {
+                new() { Letter = 'A', Text = "Verdadeiro" },
+                new() { Letter = 'B', Text = "Falso" }
+            };
     }
 }

@@ -1,42 +1,41 @@
-using Domain.Entities.Inharitance;
-using Microsoft.EntityFrameworkCore;
 using Apllication.Repositories;
 using Domain.Entities;
+using Domain.Entities.Inharitance;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Data.Repositories;
 
 public class QuestionRepository : GenericRepository<BaseQuestion>, IQuestionRepository
 {
     private readonly DataContext _context;
-    public QuestionRepository(DataContext context) : base(context)
+
+    public QuestionRepository(DataContext context)
+        : base(context)
     {
         _context = context;
     }
 
-    public async Task<IEnumerable<MultipleChoicesQuestion?>> GetAllMultiple()
+    public async Task<IEnumerable<BaseQuestion?>> GetAllComplete()
     {
-        if (_context.Questions != null)
+        if (_context.BaseQuestions != null)
         {
-            IEnumerable<MultipleChoicesQuestion?> questions = await _context.MultipleChoiceQuestions
-              .Include(q => q.ChoiceA)
-              .Include(q => q.ChoiceB)
-              .Include(q => q.ChoiceC)
-              .Include(q => q.ChoiceD)
-              .AsQueryable()
-              .ToListAsync();
-
+            IEnumerable<BaseQuestion?> questions = await _context
+                .BaseQuestions.Include(x => x.Choices)
+                .AsQueryable()
+                .ToListAsync();
             return questions;
         }
         throw new Exception("Questions repo is not set");
     }
-    public async Task<BaseQuestion?> GetByIdWithAuthor(int id)
+
+    public async Task<BaseQuestion> GetFullById(int id)
     {
-        if (_context.Questions != null)
+        if (_context.BaseQuestions != null)
         {
-            BaseQuestion? question = await _context.Questions
-              //.Include(q => q.CreatedBy)
-              .FirstOrDefaultAsync(u => u.Id == id);
-            return question;
+            BaseQuestion? question = await _context
+                .BaseQuestions.Include(q => q.Choices)
+                .SingleOrDefaultAsync(u => u.Id == id);
+            return question ?? throw new KeyNotFoundException();
         }
         throw new Exception("Questions repo is not set");
     }

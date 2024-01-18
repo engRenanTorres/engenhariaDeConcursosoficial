@@ -1,8 +1,11 @@
+using Apllication.Core;
 using Apllication.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Data.Repositories;
 using Persistence.Seed;
+using AutoMapper;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +48,8 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 //builder.Services.AddScoped<IUserService, UserService>();
 //builder.Services.AddScoped<IQuestionService, QuestionService>();
 //builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 var app = builder.Build();
 

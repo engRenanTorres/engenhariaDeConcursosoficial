@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Data;
@@ -11,9 +12,11 @@ using Persistence.Data;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextEFModelSnapshot : ModelSnapshot
+    [Migration("20240116112006_FirstCreate")]
+    partial class FirstCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,6 +97,8 @@ namespace Persistence.Migrations
                 {
                     b.HasBaseType("Domain.Entities.Inharitance.BaseQuestion");
 
+                    b.ToTable("Questions");
+
                     b.HasDiscriminator().HasValue("BooleanQuestion");
                 });
 
@@ -101,25 +106,7 @@ namespace Persistence.Migrations
                 {
                     b.HasBaseType("Domain.Entities.Inharitance.BaseQuestion");
 
-                    b.Property<int>("ChoiceAId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ChoiceBId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ChoiceCId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ChoiceDId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("ChoiceAId");
-
-                    b.HasIndex("ChoiceBId");
-
-                    b.HasIndex("ChoiceCId");
-
-                    b.HasIndex("ChoiceDId");
+                    b.ToTable("Questions");
 
                     b.HasDiscriminator().HasValue("MultipleChoicesQuestion");
                 });
@@ -128,38 +115,8 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.Inharitance.BaseQuestion", null)
                         .WithMany("Choices")
-                        .HasForeignKey("BaseQuestionId");
-                });
-
-            modelBuilder.Entity("Domain.Entities.MultipleChoicesQuestion", b =>
-                {
-                    b.HasOne("Domain.Entities.Choice", "ChoiceA")
-                        .WithMany()
-                        .HasForeignKey("ChoiceAId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Choice", "ChoiceB")
-                        .WithMany()
-                        .HasForeignKey("ChoiceBId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Choice", "ChoiceC")
-                        .WithMany()
-                        .HasForeignKey("ChoiceCId");
-
-                    b.HasOne("Domain.Entities.Choice", "ChoiceD")
-                        .WithMany()
-                        .HasForeignKey("ChoiceDId");
-
-                    b.Navigation("ChoiceA");
-
-                    b.Navigation("ChoiceB");
-
-                    b.Navigation("ChoiceC");
-
-                    b.Navigation("ChoiceD");
+                        .HasForeignKey("BaseQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Domain.Entities.Inharitance.BaseQuestion", b =>
