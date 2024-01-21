@@ -1,0 +1,40 @@
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+
+namespace API.Errors;
+
+public class AppExceptionHandler : IExceptionHandler
+{
+  public async ValueTask<bool> TryHandleAsync(
+    HttpContext httpContext,
+    Exception exception,
+    CancellationToken cancellationToken
+  )
+  {
+    if (exception is Application.Exceptions.WebException)
+    {
+      var ex = exception as Application.Exceptions.WebException;
+      var response = new ErrorResponse()
+      {
+        StatusCode = (int)((ex?.ErrorDetails?.HttpStatus ?? HttpStatusCode.InternalServerError)),
+        Title = ex?.ErrorDetails?.Code ?? "WebException Error",
+        ExceptionMessage = ex?.Message
+      };
+      await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
+      httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+      return true;
+    }
+    else
+    {
+      var response = new ErrorResponse()
+      {
+        StatusCode = StatusCodes.Status500InternalServerError,
+        Title = "Something went wrong!",
+        ExceptionMessage = exception.Message
+      };
+      await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
+      httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+      return true;
+    }
+  }
+}
