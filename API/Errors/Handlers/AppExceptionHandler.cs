@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace API.Errors;
+namespace API.Errors.Handler;
 
 public class AppExceptionHandler : IExceptionHandler
 {

@@ -1,9 +1,9 @@
 using API.Errors;
+using API.Extensions;
 using Apllication.Core;
 using Apllication.Repositories;
 using Apllication.Services;
 using Apllication.Services.Interfaces;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Data.Repositories;
@@ -14,44 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder
-  .Services.AddEntityFrameworkNpgsql()
-  .AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-  );
-
-builder.Services.AddCors(
-  (options) =>
-  {
-    options.AddPolicy(
-      "DevCors",
-      (corsBuilder) =>
-      {
-        corsBuilder
-          .WithOrigins("http://localhost:3000")
-          .AllowAnyMethod()
-          .AllowAnyHeader()
-          .AllowCredentials();
-      }
-    );
-    options.AddPolicy(
-      "ProdCors",
-      (corsBuilder) =>
-      {
-        corsBuilder
-          .WithOrigins("https://engenhariadeconcursos.com.br")
-          .AllowAnyMethod()
-          .AllowAnyHeader()
-          .AllowCredentials();
-      }
-    );
-  }
-);
 
 //builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
@@ -63,8 +29,7 @@ builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 //builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
-builder.Services.AddExceptionHandler<AppExceptionHandler>();
+
 
 var app = builder.Build();
 

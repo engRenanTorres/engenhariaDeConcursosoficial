@@ -1,5 +1,6 @@
 using Apllication.DTOs;
 using Apllication.Repositories;
+using Application.DTOs;
 using Domain.Entities.Inharitance;
 
 namespace Apllication.Services.Interfaces;
@@ -7,11 +8,12 @@ namespace Apllication.Services.Interfaces;
 public interface IQuestionService
 {
   public Task<BaseQuestion> Create(CreateQuestionDTO questionDto);
-  public Task<bool> Delete(int id);
+  public Task Delete(int id);
   public Task<IEnumerable<BaseQuestion?>> GetAllComplete();
 
   public Task<BaseQuestion?> GetFullById(int id);
 
   public Task<int> GetCount();
   public Task<int> GetLastId();
+  public Task<BaseQuestion> PatchQuestion(int id, UpdateQuestionDTO updateQuestionDTO);
 }

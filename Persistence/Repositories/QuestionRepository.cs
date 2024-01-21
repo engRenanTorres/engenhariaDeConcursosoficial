@@ -28,34 +28,34 @@ public class QuestionRepository : GenericRepository<BaseQuestion>, IQuestionRepo
     throw new Exception("Questions repo is not set");
   }
 
-  public async Task<int> GetCount()
+  public async Task<int?> GetCount()
   {
     if (_context.BaseQuestions != null)
     {
       int? id = await _context.BaseQuestions.CountAsync();
-      return id ?? throw new KeyNotFoundException();
+      return id;
     }
     throw new Exception("Questions repo is not set");
   }
 
-  public async Task<BaseQuestion> GetCompleteById(int id)
+  public async Task<BaseQuestion?> GetCompleteById(int id)
   {
     if (_context.BaseQuestions != null)
     {
       BaseQuestion? question = await _context
         .BaseQuestions.Include(q => q.Choices)
         .SingleOrDefaultAsync(u => u.Id == id);
-      return question ?? throw new KeyNotFoundException();
+      return question;
     }
     throw new Exception("Questions repo is not set");
   }
 
-  public async Task<int> GetLastId()
+  public async Task<int?> GetLastId()
   {
     if (_context.BaseQuestions != null)
     {
       int? id = await _context.BaseQuestions.MaxAsync(q => q.Id);
-      return id ?? throw new KeyNotFoundException();
+      return id;
     }
     throw new Exception("Questions repo is not set");
   }

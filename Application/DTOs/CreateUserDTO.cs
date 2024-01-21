@@ -1,18 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs;
+namespace Apllication.DTOs;
 
 public class CreateUserDTO
 {
-    [Required]
-    public string Name { get; set; } = "";
+  [Required]
+  public string Name { get; set; } = "";
 
-    [Required]
-    [EmailAddress]
-    public string? Email { get; set; }
+  [Required]
+  [EmailAddress]
+  public string? Email { get; set; }
 
-    [Required]
-    public string? Password { get; set; }
-    public string? SocialMedia { get; set; }
-    public string? Website { get; set; }
+  [Required]
+  public string? Password { get; set; }
+  public string? SocialMedia { get; set; }
+  public string? Website { get; set; }
 }

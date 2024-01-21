@@ -1,7 +1,7 @@
-namespace API.DTOs;
+namespace Application.DTOs;
 
 public class UpdateUserDTO
 {
-    public string? Name { get; set; }
-    public string? Email { get; set; }
+  public string? Name { get; set; }
+  public string? Email { get; set; }
 }

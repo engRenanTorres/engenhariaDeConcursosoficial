@@ -1,5 +1,6 @@
 using Apllication.DTOs;
 using Apllication.Services.Interfaces;
+using Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -45,5 +46,28 @@ public class QuestionController : ControllerBase
     var actionName = nameof(GetFullById);
     var LastIdCreated = await _questionService.GetLastId();
     return CreatedAtAction(actionName, new { Id = LastIdCreated }, question);
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<ActionResult> DeleteQuestion(int id)
+  {
+    _logger.LogInformation("Delete Question Controller has been called.");
+
+    await _questionService.Delete(id);
+
+    return NoContent();
+  }
+
+  [HttpPatch("{id}")]
+  public async Task<ActionResult> PatchQuestion(
+    int id,
+    [FromBody] UpdateQuestionDTO updateQuestionDTO
+  )
+  {
+    _logger.LogInformation("PatchQuestions has been called.");
+
+    var updatedQuestion = await _questionService.PatchQuestion(id, updateQuestionDTO);
+
+    return Ok(updatedQuestion);
   }
 }

@@ -2,9 +2,9 @@ using Apllication.Exceptions.VO;
 
 namespace Application.Exceptions
 {
-  public abstract class WebException : Exception
+  public class WebException : Exception
   {
-    public abstract WebExceptionVO ErrorDetails { get; set; }
+    public virtual WebExceptionVO ErrorDetails { get; set; } = new WebExceptionVO();
 
     public WebException(string? message)
       : base(message) { }

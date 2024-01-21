@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Apllication.DTOs;
+using Apllication.Exceptions;
 using Apllication.Repositories;
 using Apllication.Services;
 using Apllication.Services.Interfaces;
@@ -93,18 +94,18 @@ public class QuestionServiceTest
     }
     catch (Exception ex)
     {
-      ex.Should().BeOfType<WarningException>();
+      ex.Should().BeOfType<NotFoundException>();
       ex.Message.Should().Be("Question id: 1 not found");
     }
   }
 
-  /*[Fact]
+  [Fact]
   public async Task PatchQuestion_updateSucessfully_ShouldReturnQuestion()
   {
     var updateQuestionDTO = new UpdateQuestionDTO();
     var questionId = 1;
 
-    A.CallTo(() => _questionRepository.GetSingleQuestion(questionId))
+    A.CallTo(() => _questionRepository.GetById(questionId))
       .Returns(Task.FromResult<BaseQuestion?>(_question));
     A.CallTo(() => _questionRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
 
@@ -114,12 +115,12 @@ public class QuestionServiceTest
   }
 
   [Fact]
-  public async Task PatchQuestion_NotFoundQuestion_ShouldThrowWarnning()
+  public async Task PatchQuestion_NotFoundQuestion_ShouldThrowNotFoundException()
   {
     var updateQuestionDTO = new UpdateQuestionDTO();
     var quesitonId = 1;
 
-    A.CallTo(() => _questionRepository.GetSingleQuestion(quesitonId))
+    A.CallTo(() => _questionRepository.GetById(quesitonId))
       .Returns(Task.FromResult<BaseQuestion?>(null));
     try
     {
@@ -127,9 +128,9 @@ public class QuestionServiceTest
     }
     catch (Exception ex)
     {
-      ex.Should().BeOfType<WarningException>();
+      ex.Should().BeOfType<NotFoundException>();
     }
-  }*/
+  }
 
   [Fact]
   public async Task CreateQuestion_ShouldReturnMultipleChoiceQuestion_WhenCreateQuestionWithChoices()
