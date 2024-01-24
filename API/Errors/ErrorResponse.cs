@@ -8,4 +8,5 @@ public class ErrorResponse
   public required string Title { get; set; }
 
   public string? ExceptionMessage { get; set; }
+  public string? StackTrace { get; set; }
 }

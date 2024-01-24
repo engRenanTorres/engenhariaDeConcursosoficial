@@ -18,7 +18,8 @@ public class AppExceptionHandler : IExceptionHandler
       {
         StatusCode = (int)((ex?.ErrorDetails?.HttpStatus ?? HttpStatusCode.InternalServerError)),
         Title = ex?.ErrorDetails?.Code ?? "WebException Error",
-        ExceptionMessage = ex?.Message
+        ExceptionMessage = ex?.Message,
+        StackTrace = exception?.StackTrace?.ToString()
       };
       await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
       httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -30,7 +31,8 @@ public class AppExceptionHandler : IExceptionHandler
       {
         StatusCode = StatusCodes.Status500InternalServerError,
         Title = "Something went wrong!",
-        ExceptionMessage = exception.Message
+        ExceptionMessage = exception.Message,
+        StackTrace = exception?.StackTrace?.ToString()
       };
       await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
       httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;

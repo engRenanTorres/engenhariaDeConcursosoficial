@@ -4,6 +4,8 @@ using Apllication.Core;
 using Apllication.Repositories;
 using Apllication.Services;
 using Apllication.Services.Interfaces;
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Data.Repositories;
@@ -15,10 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-
+//Repos
 //builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -28,8 +31,6 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 //builder.Services.AddScoped<IAuthService, AuthService>();
-
-
 
 var app = builder.Build();
 
@@ -52,8 +53,9 @@ var services = scope.ServiceProvider;
 try
 {
   var context = services.GetRequiredService<DataContext>();
+  var useManager = services.GetRequiredService<UserManager<AppUser>>();
   await context.Database.MigrateAsync();
-  await Seed.SeedData(context);
+  await Seed.SeedData(context, useManager);
 }
 catch (Exception ex)
 {
