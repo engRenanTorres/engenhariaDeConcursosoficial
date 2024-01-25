@@ -1,20 +1,32 @@
 using Domain.Entities;
 using Domain.Entities.Inharitance;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 
 namespace Persistence.Seed;
 
 public class Seed
 {
-  public static async Task SeedData(DataContext contextEF, UserManager<AppUser> userManager)
+  public static async Task SeedData(
+    DataContext contextEF,
+    UserManager<AppUser> userManager,
+    RoleManager<IdentityRole> roleManager
+  )
   {
-    Console.WriteLine("!userManager.Users.Any() = " + !userManager.Users.Any());
-    if (!userManager.Users.Any())
+    if (!await roleManager.Roles.AnyAsync())
     {
-      Console.WriteLine(
-        "----------------------------------------------------------------------fui chamado1"
-      );
+      var roles = new List<string>() { "Admin", "Manager", "Member", "User" };
+      foreach (var role in roles)
+      {
+        await roleManager.CreateAsync(new IdentityRole(role));
+      }
+    }
+
+    if (!await userManager.Users.AnyAsync())
+    {
+      Console.WriteLine("Creating Default users");
       var users = new List<AppUser>()
       {
         new()
@@ -25,17 +37,19 @@ public class Seed
         },
         new()
         {
-          DisplayName = "Staff",
-          UserName = "sta",
-          Email = "st@test.com.br"
+          DisplayName = "User",
+          UserName = "user",
+          Email = "user@test.com.br"
         }
       };
 
       foreach (var user in users)
       {
-        var x = await userManager.CreateAsync(user, "Pa$$word");
-        Console.WriteLine("foi adicionado? = " + x);
+        var result = await userManager.CreateAsync(user, "Senhazo1!");
+        Console.WriteLine("foi adicionado? = " + result);
       }
+      await userManager.AddToRoleAsync(users[0], "Admin");
+      await userManager.AddToRoleAsync(users[1], "User");
     }
 
     if (contextEF.BaseQuestions.Any())
@@ -65,6 +79,7 @@ public class Seed
         CreatedById = 1,
       },
     };
+
     var questionsMultipleChoice = new List<MultipleChoicesQuestion>
     {
       new()

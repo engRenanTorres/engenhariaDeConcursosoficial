@@ -5,7 +5,9 @@ using Apllication.Repositories;
 using Apllication.Services;
 using Apllication.Services.Interfaces;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Data.Repositories;
@@ -15,7 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt =>
+{
+  var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+  opt.Filters.Add(new AuthorizeFilter(policy));
+});
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
@@ -44,6 +50,7 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseExceptionHandler(_ => { });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -54,8 +61,9 @@ try
 {
   var context = services.GetRequiredService<DataContext>();
   var useManager = services.GetRequiredService<UserManager<AppUser>>();
+  var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
   await context.Database.MigrateAsync();
-  await Seed.SeedData(context, useManager);
+  await Seed.SeedData(context, useManager, roleManager);
 }
 catch (Exception ex)
 {
