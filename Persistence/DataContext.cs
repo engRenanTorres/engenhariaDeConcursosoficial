@@ -22,11 +22,8 @@ public class DataContext : IdentityDbContext<AppUser>
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
-    modelBuilder.Entity<AppUser>().HasKey(x => x.Id);
-    /*modelBuilder.Entity<User>()
-      .HasMany(q => q.Questions)
-      .WithOne(u => u.CreatedBy)
-      .IsRequired();*/
+    modelBuilder.Entity<AppUser>().HasKey(u => u.Id);
+    //modelBuilder.Entity<AppUser>().HasMany(q => q.Questions).WithOne(u => u.CreatedBy).IsRequired();
     modelBuilder
       .Entity<MultipleChoicesQuestion>()
       .HasMany(x => x.Choices)

@@ -15,6 +15,7 @@ public class Seed
     RoleManager<IdentityRole> roleManager
   )
   {
+    AppUser? _creator;
     if (!await roleManager.Roles.AnyAsync())
     {
       var roles = new List<string>() { "Admin", "Manager", "Member", "User" };
@@ -42,7 +43,7 @@ public class Seed
           Email = "user@test.com.br"
         }
       };
-
+      _creator = users[0];
       foreach (var user in users)
       {
         var result = await userManager.CreateAsync(user, "Senhazo1!");
@@ -50,50 +51,48 @@ public class Seed
       }
       await userManager.AddToRoleAsync(users[0], "Admin");
       await userManager.AddToRoleAsync(users[1], "User");
+
+      if (contextEF.BaseQuestions.Any())
+        return;
+
+      var choiceA = new Choice() { Letter = 'A', Text = "Jéssica" };
+      var choiceB = new Choice() { Letter = 'B', Text = "Renan" };
+      var choiceC = new Choice() { Letter = 'C', Text = "Alfredo" };
+      var choiceD = new Choice() { Letter = 'D', Text = "Alberto" };
+
+      var questions = new List<BooleanQuestion>
+      {
+        new()
+        {
+          Answer = 'A',
+          Body = "Renan é foda!",
+          CreatedAt = DateTime.UtcNow,
+          CreatedBy = _creator,
+        },
+        new()
+        {
+          Answer = 'B',
+          Body = "Renan é chato!",
+          CreatedAt = DateTime.UtcNow,
+          CreatedBy = _creator,
+        },
+      };
+
+      var questionsMultipleChoice = new List<MultipleChoicesQuestion>
+      {
+        new()
+        {
+          Answer = 'B',
+          Body = "Quem é o mais legal?",
+          CreatedAt = DateTime.UtcNow,
+          LastUpdatedAt = DateTime.UtcNow,
+          CreatedBy = _creator,
+          Choices = new List<Choice>() { choiceA, choiceB, choiceC, choiceD }
+        }
+      };
+      await contextEF.BooleanQuestions.AddRangeAsync(questions);
+      await contextEF.MultipleChoicesQuestions.AddRangeAsync(questionsMultipleChoice);
+      await contextEF.SaveChangesAsync();
     }
-
-    if (contextEF.BaseQuestions.Any())
-      return;
-
-    var choiceA = new Choice() { Letter = 'A', Text = "Jéssica" };
-    var choiceB = new Choice() { Letter = 'B', Text = "Renan" };
-    var choiceC = new Choice() { Letter = 'C', Text = "Alfredo" };
-    var choiceD = new Choice() { Letter = 'D', Text = "Alberto" };
-
-    var questions = new List<BooleanQuestion>
-    {
-      new()
-      {
-        Answer = 'A',
-        Body = "Renan é foda!",
-        CreatedAt = DateTime.UtcNow,
-        LastUpdatedAt = DateTime.UtcNow,
-        CreatedById = 1,
-      },
-      new()
-      {
-        Answer = 'B',
-        Body = "Renan é chato!",
-        CreatedAt = DateTime.UtcNow,
-        LastUpdatedAt = DateTime.UtcNow,
-        CreatedById = 1,
-      },
-    };
-
-    var questionsMultipleChoice = new List<MultipleChoicesQuestion>
-    {
-      new()
-      {
-        Answer = 'B',
-        Body = "Quem é o mais legal?",
-        CreatedAt = DateTime.UtcNow,
-        LastUpdatedAt = DateTime.UtcNow,
-        CreatedById = 1,
-        Choices = new List<Choice>() { choiceA, choiceB, choiceC, choiceD }
-      }
-    };
-    await contextEF.BooleanQuestions.AddRangeAsync(questions);
-    await contextEF.MultipleChoicesQuestions.AddRangeAsync(questionsMultipleChoice);
-    await contextEF.SaveChangesAsync();
   }
 }

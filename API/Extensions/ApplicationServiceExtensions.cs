@@ -1,4 +1,6 @@
 using Apllication.Core;
+using Apllication.Interfaces;
+using Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence.Data;
@@ -53,6 +55,8 @@ public static class ApplicationServiceExtensions
 
     services.AddAutoMapper(typeof(MappingProfile).Assembly);
     services.AddExceptionHandler<API.Errors.Handler.AppExceptionHandler>();
+    services.AddHttpContextAccessor();
+    services.AddScoped<IUserAccessor, UserAccessor>();
 
     services.AddCors(
       (options) =>

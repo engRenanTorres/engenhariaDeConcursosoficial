@@ -20,6 +20,7 @@ public class QuestionController : ControllerBase
   }
 
   [HttpGet]
+  [AllowAnonymous]
   public async Task<ActionResult> GetAllFull()
   {
     var questions = await _questionService.GetAllComplete();

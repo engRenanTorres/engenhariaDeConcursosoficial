@@ -4,6 +4,7 @@ using API.Controllers;
 using Apllication.DTOs;
 using Apllication.Exceptions;
 using Apllication.Services.Interfaces;
+using Application.DTOs;
 using Domain.Entities;
 using Domain.Entities.Inharitance;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +18,14 @@ namespace DotnetAPITests.Controllers
     private readonly IQuestionService _questionService;
     private readonly ILogger<QuestionController> _logger;
     private readonly QuestionController _questionController;
+
+    private readonly AppUser _appUser =
+      new()
+      {
+        DisplayName = "TestUser",
+        Email = "test@tes.com",
+        UserName = "tester"
+      };
     private readonly MultipleChoicesQuestion _question =
       new()
       {
@@ -26,12 +35,27 @@ namespace DotnetAPITests.Controllers
         Body = "Is this a quetion Test?",
         Answer = 'A',
         Tip = "A",
-        CreatedById = 1,
-        //CreatedBy = null,
       };
+
+    private ViewQuestionDto _viewQuestionDto { get; set; }
 
     public QuestionControllerTest()
     {
+      _question.CreatedBy = _appUser;
+      _viewQuestionDto = new ViewQuestionDto
+      {
+        Id = _question.Id,
+        CreatedAt = _question.CreatedAt,
+        LastUpdatedAt = _question.LastUpdatedAt,
+        Body = _question.Body,
+        Answer = _question.Answer,
+        Tip = _question.Tip,
+        CreatedBy = new UserDto
+        {
+          DisplayName = _question.CreatedBy.DisplayName,
+          Username = _question.CreatedBy.UserName,
+        }
+      };
       _questionService = A.Fake<IQuestionService>();
       _logger = A.Fake<ILogger<QuestionController>>();
       _questionController = new QuestionController(_logger, _questionService);
@@ -112,7 +136,7 @@ namespace DotnetAPITests.Controllers
     public async Task GetQuestion_ReturnQuestion()
     {
       A.CallTo(() => _questionService.GetFullById(1))
-        .Returns(Task.FromResult<BaseQuestion?>(_question));
+        .Returns(Task.FromResult<ViewQuestionDto?>(_viewQuestionDto));
 
       var result = await _questionController.GetFullById(1);
 
@@ -121,40 +145,42 @@ namespace DotnetAPITests.Controllers
 
       createdResult?.StatusCode.Should().Be(StatusCodes.Status200OK);
 
-      createdResult?.Value.Should().BeSameAs(_question);
+      createdResult?.Value.Should().BeEquivalentTo(_viewQuestionDto);
     }
 
-    /*[Fact]
+    [Fact]
     public async Task GetQuestion_NotFoundQuestion_ThrowsNotFound()
     {
-      A.CallTo(() => _questionService.GetFullById(1)).Throws(new NotFoundException("Notfound"));
+      var exceptionMessage = "Question id: 1 not found";
+      A.CallTo(() => _questionService.GetFullById(1))
+        .Throws(new NotFoundException(exceptionMessage));
 
-      var actionResult = await _questionController.GetFullById(1);
-
-      actionResult.Should().NotBeNull();
-      actionResult.Should().BeOfType<NotFoundObjectResult>();
-      var badRequestResult = actionResult as NotFoundObjectResult;
-
-      badRequestResult?.StatusCode.Should().Be(404);
-
-      badRequestResult?.Value.Should().Be("Question id: 1 not found");
-    }*/
+      try
+      {
+        var actionResult = await _questionController.GetFullById(1);
+      }
+      catch (Exception ex)
+      {
+        ex.Should().BeOfType<NotFoundException>();
+        ex.Message.Should().Be(exceptionMessage);
+      }
+    }
 
     [Fact]
     public async Task GetQuestions_ReturnQuesitons()
     {
-      var questions = new List<MultipleChoicesQuestion> { _question };
+      var questions = new List<ViewQuestionDto> { _viewQuestionDto };
       A.CallTo(() => _questionService.GetAllComplete())
-        .Returns(Task.FromResult<IEnumerable<BaseQuestion>>(questions));
+        .Returns(Task.FromResult<IEnumerable<ViewQuestionDto>>([_viewQuestionDto]));
 
       var result = await _questionController.GetAllFull();
 
       result.Should().BeOfType<OkObjectResult>();
-      var createdResult = result as OkObjectResult;
+      var okResult = result as OkObjectResult;
 
-      createdResult?.StatusCode.Should().Be(StatusCodes.Status200OK);
+      okResult?.StatusCode.Should().Be(StatusCodes.Status200OK);
 
-      createdResult?.Value.Should().BeSameAs(questions);
+      okResult?.Value.Should().BeEquivalentTo(questions);
     }
 
     /*[Fact]

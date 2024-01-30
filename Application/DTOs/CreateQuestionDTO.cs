@@ -17,5 +17,5 @@ public class CreateQuestionDTO
   public string Answer { get; set; } = "A";
 
   public string? Tip { get; set; }
-  public ICollection<ChoiceDTO>? Choices { get; set; }
+  public ICollection<ChoiceDto>? Choices { get; set; }
 }

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Apllication.DTOs;
 using Apllication.Exceptions;
+using Apllication.Interfaces;
 using Apllication.Repositories;
 using Apllication.Services.Interfaces;
 using Application.DTOs;
@@ -14,21 +15,27 @@ namespace Apllication.Services;
 public class QuestionService : IQuestionService
 {
   private readonly IQuestionRepository _questionRepository;
+  private readonly IUserAccessor _userAccessor;
   private readonly ILogger<IQuestionService> _logger;
 
-  public QuestionService(IQuestionRepository questionRepository, ILogger<IQuestionService> logger)
+  public QuestionService(
+    IQuestionRepository questionRepository,
+    IUserAccessor userAccessor,
+    ILogger<IQuestionService> logger
+  )
   {
     _questionRepository = questionRepository;
+    _userAccessor = userAccessor;
     _logger = logger;
   }
 
-  public async Task<IEnumerable<BaseQuestion?>> GetAllComplete()
+  public async Task<IEnumerable<ViewQuestionDto?>> GetAllComplete()
   {
     var questions = await _questionRepository.GetAllComplete();
     return questions;
   }
 
-  public async Task<BaseQuestion?> GetFullById(int id)
+  public async Task<ViewQuestionDto?> GetFullById(int id)
   {
     var question = await _questionRepository.GetCompleteById(id);
     return question ?? throw new NotFoundException("Question id: " + id + " not found");
@@ -49,6 +56,8 @@ public class QuestionService : IQuestionService
   public async Task<BaseQuestion> Create(CreateQuestionDTO questionDto)
   {
     BaseQuestion question;
+    var creatorName =
+      _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to create.");
 
     if (questionDto.Choices != null)
     {
@@ -63,8 +72,6 @@ public class QuestionService : IQuestionService
         Answer = questionDto.Answer.ToCharArray()[0],
         Tip = questionDto.Tip,
         CreatedAt = DateTime.UtcNow,
-        LastUpdatedAt = DateTime.UtcNow,
-        //CreatedBy = user,
         Choices = choices
       };
     }
@@ -76,12 +83,10 @@ public class QuestionService : IQuestionService
         Answer = questionDto.Answer.ToCharArray()[0],
         Tip = questionDto.Tip,
         CreatedAt = DateTime.UtcNow,
-        LastUpdatedAt = DateTime.UtcNow,
-        //CreatedBy = user,
       };
     }
 
-    _questionRepository.Add(question);
+    _questionRepository.Add(question, creatorName);
     if (await _questionRepository.SaveChanges())
     {
       return question;
@@ -126,6 +131,10 @@ public class QuestionService : IQuestionService
       }
       question.Choices = choices;
     }
+
+    var editorName =
+      _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to edit.");
+    _questionRepository.Edit(question, editorName);
 
     if (await _questionRepository.SaveChanges())
     {

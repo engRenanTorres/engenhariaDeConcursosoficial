@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs;
 
-public class ChoiceDTO
+public class ChoiceDto
 {
   [Required]
   [StringLength(1)]

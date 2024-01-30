@@ -9,9 +9,9 @@ public interface IQuestionService
 {
   public Task<BaseQuestion> Create(CreateQuestionDTO questionDto);
   public Task Delete(int id);
-  public Task<IEnumerable<BaseQuestion?>> GetAllComplete();
+  public Task<IEnumerable<ViewQuestionDto?>> GetAllComplete();
 
-  public Task<BaseQuestion?> GetFullById(int id);
+  public Task<ViewQuestionDto?> GetFullById(int id);
 
   public Task<int> GetCount();
   public Task<int> GetLastId();
