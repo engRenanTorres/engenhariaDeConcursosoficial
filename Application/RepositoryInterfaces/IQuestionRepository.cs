@@ -1,7 +1,7 @@
 using Application.DTOs;
 using Domain.Entities.Inharitance;
 
-namespace Apllication.Repositories;
+namespace Apllication.Repositories.Interfaces;
 
 public interface IQuestionRepository
 {

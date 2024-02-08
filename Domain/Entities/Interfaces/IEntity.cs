@@ -2,5 +2,7 @@ namespace Domain.Entities.Interfaces;
 
 public interface IEntity
 {
-  int Id { get; set; }
+  Guid Id { get; set; }
+  
+  public DateTime CreatedAt { get; set; }
 }

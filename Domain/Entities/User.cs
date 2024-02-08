@@ -1,8 +1,3 @@
-//using Microsoft.AspNetCore.Mvc.ModelBinding;
-//using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using Domain.Entities.Inharitance;
 using Domain.Enums;
 using Microsoft.AspNetCore.Identity;

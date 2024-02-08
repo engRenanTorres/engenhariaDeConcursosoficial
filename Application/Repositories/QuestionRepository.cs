@@ -1,7 +1,6 @@
 using Apllication.DTOs;
-using Apllication.Repositories;
+using Apllication.Repositories.Interfaces;
 using Application.DTOs;
-using Domain.Entities;
 using Domain.Entities.Inharitance;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;

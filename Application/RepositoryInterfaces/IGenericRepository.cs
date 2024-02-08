@@ -7,5 +7,6 @@ public interface IGenericRepository<T>
   public void Add(T entity);
   public void Remove(T entity);
   public Task<IEnumerable<T?>> GetAll();
-  public Task<T?> GetById(int id);
+  Task<int?> Count();
+  public Task<T?> GetById(Guid id);
 }

@@ -1,6 +1,5 @@
 using Domain.Entities;
 using Domain.Entities.Inharitance;
-using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
@@ -52,6 +51,44 @@ public class Seed
       await userManager.AddToRoleAsync(users[0], "Admin");
       await userManager.AddToRoleAsync(users[1], "User");
 
+      var level1 = new QuestionLevel { Name = "Superior", CreatedAt = DateTime.UtcNow, };
+      if (!contextEF.QuestionLevels.Any())
+      {
+        await contextEF.QuestionLevels.AddAsync(level1);
+        await contextEF.SaveChangesAsync();
+      }
+
+      var institute = new Institute { Name = "Cebraspe", CreatedAt = DateTime.UtcNow, };
+
+      var concurso1 = new Concurso
+      {
+        Name = "Petrobras",
+        Year = 2010,
+        Institute = institute,
+        CreatedAt = DateTime.UtcNow,
+      };
+      if (!contextEF.Institutes.Any())
+      {
+        await contextEF.Institutes.AddAsync(institute);
+        await contextEF.Concursos.AddAsync(concurso1);
+        await contextEF.SaveChangesAsync();
+      }
+
+      StudyArea studyArea = new() { Name = "Engenharia civil", CreatedAt = DateTime.UtcNow, };
+      Subject subject =
+        new()
+        {
+          Name = "Resistência dos Materiais",
+          StudyArea = studyArea,
+          CreatedAt = DateTime.UtcNow,
+        };
+      if (!contextEF.StudyAreas.Any())
+      {
+        await contextEF.StudyAreas.AddAsync(studyArea);
+        await contextEF.Subjects.AddAsync(subject);
+        await contextEF.SaveChangesAsync();
+      }
+
       if (contextEF.BaseQuestions.Any())
         return;
 
@@ -68,6 +105,9 @@ public class Seed
           Body = "Renan é foda!",
           CreatedAt = DateTime.UtcNow,
           CreatedBy = _creator,
+          QuestionLevel = level1,
+          Concurso = concurso1,
+          Subject = subject,
         },
         new()
         {
@@ -75,6 +115,9 @@ public class Seed
           Body = "Renan é chato!",
           CreatedAt = DateTime.UtcNow,
           CreatedBy = _creator,
+          QuestionLevel = level1,
+          Concurso = concurso1,
+          Subject = subject,
         },
       };
 
@@ -87,6 +130,9 @@ public class Seed
           CreatedAt = DateTime.UtcNow,
           LastUpdatedAt = DateTime.UtcNow,
           CreatedBy = _creator,
+          QuestionLevel = level1,
+          Concurso = concurso1,
+          Subject = subject,
           Choices = new List<Choice>() { choiceA, choiceB, choiceC, choiceD }
         }
       };

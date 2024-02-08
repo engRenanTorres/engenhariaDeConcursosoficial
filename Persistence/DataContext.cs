@@ -13,17 +13,31 @@ public class DataContext : IdentityDbContext<AppUser>
     // _conectionString = config.GetConnectionString("DefaultConnection");
   }
 
-  //public DbSet<User>? Users { get; set; }
   public DbSet<BaseQuestion> BaseQuestions { get; set; }
   public DbSet<BooleanQuestion> BooleanQuestions { get; set; }
   public DbSet<MultipleChoicesQuestion> MultipleChoicesQuestions { get; set; }
   public DbSet<Choice> Choices { get; set; }
+  public DbSet<Concurso> Concursos { get; set; }
+  public DbSet<Institute> Institutes { get; set; }
+  public DbSet<QuestionLevel> QuestionLevels { get; set; }
+  public DbSet<Subject> Subjects { get; set; }
+  public DbSet<StudyArea> StudyAreas { get; set; }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
     modelBuilder.Entity<AppUser>().HasKey(u => u.Id);
-    //modelBuilder.Entity<AppUser>().HasMany(q => q.Questions).WithOne(u => u.CreatedBy).IsRequired();
+    modelBuilder.Entity<BaseQuestion>().HasOne(x => x.CreatedBy).WithMany(x => x.Questions);
+    modelBuilder
+      .Entity<Institute>()
+      .HasMany(x => x.Concursos)
+      .WithOne(x => x.Institute)
+      .OnDelete(DeleteBehavior.Cascade);
+    modelBuilder
+      .Entity<Concurso>()
+      .HasMany(x => x.Questions)
+      .WithOne(x => x.Concurso)
+      .OnDelete(DeleteBehavior.Cascade);
     modelBuilder
       .Entity<MultipleChoicesQuestion>()
       .HasMany(x => x.Choices)

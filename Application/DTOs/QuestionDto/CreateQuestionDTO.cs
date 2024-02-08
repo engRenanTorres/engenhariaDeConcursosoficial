@@ -16,6 +16,12 @@ public class CreateQuestionDTO
   )]
   public string Answer { get; set; } = "A";
 
+  [Required]
+  public required Guid SubjectId { get; set; }
+
+  [Required]
+  public required Guid ConcursoId { get; set; }
+
   public string? Tip { get; set; }
   public ICollection<ChoiceDto>? Choices { get; set; }
 }

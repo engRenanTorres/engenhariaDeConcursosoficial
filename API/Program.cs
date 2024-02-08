@@ -30,13 +30,23 @@ builder.Services.AddIdentityServices(builder.Configuration);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 //Repos
-//builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionLevelRepository, QuestionLevelRepository>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<IInstituteRepository, InstituteRepository>();
+builder.Services.AddScoped<IConcursoRepository, ConcursoRepository>();
+builder.Services.AddScoped<IStudyAreaRepository, StudyAreaRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 //Services
 //builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IQLevelService, QLevelService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IInstituteService, InstituteService>();
+builder.Services.AddScoped<IConcursoService, ConcursoService>();
+builder.Services.AddScoped<IAreaService, AreaService>();
 
 //builder.Services.AddScoped<IAuthService, AuthService>();
 

@@ -1,3 +1,4 @@
+using System;
 using Apllication.Repositories.Interfaces;
 using Domain.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ public class GenericRepository<T> : IGenericRepository<T>
   {
     if (entity != null)
     {
+      entity.CreatedAt = DateTime.UtcNow;
       _context.Set<T>().Add(entity);
     }
   }
@@ -53,7 +55,7 @@ public class GenericRepository<T> : IGenericRepository<T>
     return entities;
   }
 
-  public virtual async Task<T?> GetById(int id)
+  public virtual async Task<T?> GetById(Guid id)
   {
     T? entity = await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
     return entity;
@@ -64,16 +66,6 @@ public class GenericRepository<T> : IGenericRepository<T>
     if (_context.Set<T>() != null)
     {
       int? id = await _context.Set<T>().CountAsync();
-      return id;
-    }
-    throw new Exception($"{nameof(T)} repo is not set");
-  }
-
-  public async Task<int?> GetLastId()
-  {
-    if (_context.Set<T>() != null)
-    {
-      int? id = await _context.Set<T>().MaxAsync(q => q.Id);
       return id;
     }
     throw new Exception($"{nameof(T)} repo is not set");
