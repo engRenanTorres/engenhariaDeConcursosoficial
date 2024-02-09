@@ -58,11 +58,11 @@ public class AreaService : IAreaService
 
   public async Task Delete(Guid id)
   {
-    _logger.LogInformation("Delete Subject has been called.");
+    _logger.LogInformation("Delete Area has been called.");
 
     StudyArea area =
       await _areaRepository.GetById(id)
-      ?? throw new NotFoundException("Subject id: " + id + " not found");
+      ?? throw new NotFoundException("Area id: " + id + " not found");
 
     _areaRepository.Remove(area);
     if (await _areaRepository.SaveChanges())

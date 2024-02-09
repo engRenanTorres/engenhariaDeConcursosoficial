@@ -1,7 +1,6 @@
 using Apllication.DTOs;
 using Apllication.Exceptions;
 using Apllication.Interfaces;
-using Apllication.Repositories;
 using Apllication.Repositories.Interfaces;
 using Apllication.Services;
 using Apllication.Services.Interfaces;
@@ -12,24 +11,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Tests;
 
-
-/*public class QuestionServiceTest
+public class QuestionServiceTest
 {
   private readonly IQuestionRepository _questionRepository;
 
   private readonly IUserAccessor _userAccessor;
   private readonly ILogger<IQuestionService> _logger;
   private readonly IQuestionService _questionService;
-  private readonly MultipleChoicesQuestion _question =
-    new()
-    {
-      Id = 1,
-      CreatedAt = new DateTime(2020, 07, 02, 22, 59, 59),
-      LastUpdatedAt = new DateTime(2020, 07, 02, 22, 59, 59),
-      Body = "Is this a quetion Test?",
-      Answer = 'A',
-      Tip = "A",
-    };
+  private readonly ISubjectService _subjectService;
+  private readonly IConcursoService _concursoService;
+  private readonly IQLevelService _qLevelService;
+  private readonly MultipleChoicesQuestion _question;
+  private readonly DateTime _createdAt = new(2020, 07, 02, 22, 59, 59);
+  private readonly ViewQuestionDto _viewQuestionDto;
   private readonly AppUser _appUser =
     new()
     {
@@ -37,11 +31,44 @@ namespace Tests;
       Email = "test@tes.com",
       UserName = "tester"
     };
-  private ViewQuestionDto _viewQuestionDto { get; set; }
+  private readonly QuestionLevel _questionLevel =
+    new()
+    {
+      Id = Guid.NewGuid(),
+      Name = "Superior",
+      CreatedAt = new DateTime(2020, 07, 02, 22, 59, 59),
+    };
+  private readonly Concurso _concurso =
+    new()
+    {
+      Id = Guid.NewGuid(),
+      Name = "Petrobras",
+      CreatedAt = new DateTime(2020, 07, 02, 22, 59, 59),
+      Institute = new() { Id = Guid.NewGuid(), Name = "Cebraspe" }
+    };
+  private readonly Subject _subject =
+    new()
+    {
+      Id = Guid.NewGuid(),
+      Name = "Estruturas",
+      StudyArea = new() { Id = Guid.NewGuid(), Name = "EngCivil", }
+    };
 
   public QuestionServiceTest()
   {
-    _question.CreatedBy = _appUser;
+    _question = new()
+    {
+      Id = 1,
+      CreatedBy = _appUser,
+      QuestionLevel = _questionLevel,
+      Concurso = _concurso,
+      Subject = _subject,
+      CreatedAt = _createdAt,
+      LastUpdatedAt = new DateTime(2020, 07, 02, 22, 59, 59),
+      Body = "Is this a quetion Test?",
+      Answer = 'A',
+      Tip = "A",
+    };
     _viewQuestionDto = new ViewQuestionDto
     {
       Id = _question.Id,
@@ -57,9 +84,19 @@ namespace Tests;
       }
     };
     _questionRepository = A.Fake<IQuestionRepository>();
+    _subjectService = A.Fake<ISubjectService>();
+    _qLevelService = A.Fake<IQLevelService>();
+    _concursoService = A.Fake<IConcursoService>();
     _userAccessor = A.Fake<IUserAccessor>();
     _logger = A.Fake<ILogger<IQuestionService>>();
-    _questionService = new QuestionService(_questionRepository, _userAccessor, _logger);
+    _questionService = new QuestionService(
+      _questionRepository,
+      _subjectService,
+      _qLevelService,
+      _concursoService,
+      _userAccessor,
+      _logger
+    );
   }
 
   [Fact]
@@ -162,6 +199,8 @@ namespace Tests;
     {
       Body = "Is this a quetion Test?",
       Answer = "A",
+      SubjectId = _subject.Id,
+      ConcursoId = _concurso.Id,
       Tip = "A",
       Choices = new List<ChoiceDto>()
       {
@@ -188,6 +227,8 @@ namespace Tests;
     {
       Body = "Is this a quetion Test?",
       Answer = "A",
+      SubjectId = _subject.Id,
+      ConcursoId = _concurso.Id,
       Tip = "A",
     };
 
@@ -202,4 +243,4 @@ namespace Tests;
     result?.Body.Should().Be(_question.Body);
     result.Should().BeOfType<BooleanQuestion>();
   }
-}*/
+}

@@ -22,7 +22,7 @@ public class QuestionService : IQuestionService
 
   public QuestionService(
     IQuestionRepository questionRepository,
-    ISubjectService subjectRepository,
+    ISubjectService subjectService,
     IQLevelService qlevelService,
     IConcursoService concursoService,
     IUserAccessor userAccessor,
@@ -30,7 +30,7 @@ public class QuestionService : IQuestionService
   )
   {
     _questionRepository = questionRepository;
-    _subjectService = subjectRepository;
+    _subjectService = subjectService;
     _qlevelService = qlevelService;
     _concursoService = concursoService;
     _userAccessor = userAccessor;

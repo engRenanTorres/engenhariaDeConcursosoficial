@@ -5,7 +5,7 @@ namespace Application.DTOs.Concurso;
 
 public class UpdateConcursoDto
 {
-  public required string Name { get; set; }
+  public string? Name { get; set; }
   public string? About { get; set; }
 
   [Range(2010, 2030)]
