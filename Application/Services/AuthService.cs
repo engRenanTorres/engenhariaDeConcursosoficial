@@ -2,7 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Apllication.DTOs;
+using Apllication.DTOs.Users;
 using Apllication.Exceptions;
+using Apllication.Interfaces;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,16 +18,19 @@ public class AuthService : IAuthService
   private readonly UserManager<AppUser> _userManager;
   private readonly RoleManager<IdentityRole> _roleManager;
   private readonly IConfiguration _configuration;
+  private readonly IUserAccessor _userAccessor;
 
   public AuthService(
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole> roleManager,
-    IConfiguration configuration
+    IConfiguration configuration,
+    IUserAccessor userAccessor
   )
   {
     _userManager = userManager;
     _roleManager = roleManager;
     _configuration = configuration;
+    _userAccessor = userAccessor;
   }
 
   public string CreateToken(AppUser user)
@@ -97,6 +102,51 @@ public class AuthService : IAuthService
       return this.ParseUserDto(user);
     }
     throw new BadRequestException("Error saving user", new() { Errors = result.Errors.ToString() });
+  }
+
+  public async Task<UserDto> Update(UpdateUserDto userDto)
+  {
+    var userName =
+      _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to create.");
+    var user =
+      await _userManager.FindByNameAsync(userName)
+      ?? throw new BadRequestException("You must be loged to create.");
+    var userUpdated = new AppUser
+    {
+      DisplayName = userDto.DisplayName ?? user.DisplayName,
+      Email = userDto.Email ?? user.Email,
+      UserName = userDto.Username ?? userDto.Username,
+      Bio = userDto.Bio ?? user.Bio,
+    };
+
+    var result = await _userManager.UpdateAsync(user);
+    if (result.Succeeded)
+    {
+      return this.ParseUserDto(user);
+    }
+    throw new BadRequestException(
+      "Error updating user",
+      new() { Errors = result.Errors.ToString() }
+    );
+  }
+
+  public async Task<UserDto> UpdatePassword(string currentPassword, string newPassword)
+  {
+    var userName =
+      _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to create.");
+    var user =
+      await _userManager.FindByNameAsync(userName)
+      ?? throw new BadRequestException("You must be loged to create.");
+
+    var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+    if (result.Succeeded)
+    {
+      return this.ParseUserDto(user);
+    }
+    throw new BadRequestException(
+      "Error updating user",
+      new() { Errors = result.Errors.ToString() }
+    );
   }
 
   public async Task<UserDto> GetCurrentUser(string email)

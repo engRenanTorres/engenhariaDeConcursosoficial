@@ -43,6 +43,13 @@ public class AuthController : ControllerBase
     return NoContent();
   }
 
+  [Authorize(Policy = "IsActivityHost")]
+  [HttpPost("Update")]
+  public async Task<ActionResult> Update([FromBody] RoleDto roleDto)
+  {
+    throw new NotImplementedException();
+  }
+
   [Authorize(Roles = "Admin")]
   [HttpPost("RemoveRole")]
   public async Task<ActionResult<UserDto>> RemoveRole([FromBody] RoleDto roleDto)
