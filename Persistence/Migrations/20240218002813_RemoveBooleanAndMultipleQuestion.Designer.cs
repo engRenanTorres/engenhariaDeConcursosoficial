@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Data;
@@ -11,9 +12,11 @@ using Persistence.Data;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240218002813_RemoveBooleanAndMultipleQuestion")]
+    partial class RemoveBooleanAndMultipleQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,11 +108,11 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BaseQuestionId")
+                        .HasColumnType("integer");
+
                     b.Property<char>("Letter")
                         .HasColumnType("character(1)");
-
-                    b.Property<int?>("QuestionId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -117,7 +120,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("BaseQuestionId");
 
                     b.ToTable("Choices");
                 });
@@ -153,7 +156,7 @@ namespace Persistence.Migrations
                     b.ToTable("Concursos");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Inharitance.Question", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.BaseQuestion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -445,9 +448,9 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Choice", b =>
                 {
-                    b.HasOne("Domain.Entities.Inharitance.Question", null)
+                    b.HasOne("Domain.Entities.Inharitance.BaseQuestion", null)
                         .WithMany("Choices")
-                        .HasForeignKey("QuestionId")
+                        .HasForeignKey("BaseQuestionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -462,7 +465,7 @@ namespace Persistence.Migrations
                     b.Navigation("Institute");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Inharitance.Question", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.BaseQuestion", b =>
                 {
                     b.HasOne("Domain.Entities.Concurso", "Concurso")
                         .WithMany("Questions")
@@ -573,7 +576,7 @@ namespace Persistence.Migrations
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Inharitance.Question", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.BaseQuestion", b =>
                 {
                     b.Navigation("Choices");
                 });

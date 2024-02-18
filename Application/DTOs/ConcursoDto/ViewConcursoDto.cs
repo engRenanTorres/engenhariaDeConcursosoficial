@@ -11,5 +11,5 @@ public class ViewConcursoDto
 
   public int? Year { get; set; }
 
-  public Guid? InstituteId { get; set; }
+  public string? InstituteName { get; set; }
 }

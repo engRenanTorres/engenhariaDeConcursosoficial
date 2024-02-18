@@ -19,5 +19,5 @@ public class Subject : IEntity
 
   public required StudyArea StudyArea { get; set; }
 
-  public IEnumerable<BaseQuestion> Questions { get; set; } = new List<BaseQuestion>();
+  public IEnumerable<Question> Questions { get; set; } = new List<Question>();
 }

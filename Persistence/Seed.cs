@@ -97,7 +97,7 @@ public class Seed
       var choiceC = new Choice() { Letter = 'C', Text = "Alfredo" };
       var choiceD = new Choice() { Letter = 'D', Text = "Alberto" };
 
-      var questions = new List<BooleanQuestion>
+      var questions = new List<Question>
       {
         new()
         {
@@ -121,7 +121,7 @@ public class Seed
         },
       };
 
-      var questionsMultipleChoice = new List<MultipleChoicesQuestion>
+      var questionsMultipleChoice = new List<Question>
       {
         new()
         {
@@ -136,8 +136,8 @@ public class Seed
           Choices = new List<Choice>() { choiceA, choiceB, choiceC, choiceD }
         }
       };
-      await contextEF.BooleanQuestions.AddRangeAsync(questions);
-      await contextEF.MultipleChoicesQuestions.AddRangeAsync(questionsMultipleChoice);
+      await contextEF.BaseQuestions.AddRangeAsync(questions);
+      await contextEF.BaseQuestions.AddRangeAsync(questionsMultipleChoice);
       await contextEF.SaveChangesAsync();
     }
   }

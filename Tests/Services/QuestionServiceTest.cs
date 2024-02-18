@@ -131,7 +131,7 @@ public class QuestionServiceTest
     var questionId = 1;
 
     A.CallTo(() => _questionRepository.GetById(questionId))
-      .Returns(Task.FromResult<BaseQuestion?>(_question));
+      .Returns(Task.FromResult<Question?>(_question));
     A.CallTo(() => _questionRepository.Remove(_question));
     A.CallTo(() => _questionRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
 
@@ -146,7 +146,7 @@ public class QuestionServiceTest
     var questionId = 1;
 
     A.CallTo(() => _questionRepository.GetById(questionId))
-      .Returns(Task.FromResult<BaseQuestion?>(null));
+      .Returns(Task.FromResult<Question?>(null));
 
     try
     {
@@ -166,7 +166,7 @@ public class QuestionServiceTest
     var questionId = 1;
 
     A.CallTo(() => _questionRepository.GetById(questionId))
-      .Returns(Task.FromResult<BaseQuestion?>(_question));
+      .Returns(Task.FromResult<Question?>(_question));
     A.CallTo(() => _questionRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
 
     var result = await _questionService.PatchQuestion(questionId, updateQuestionDTO);
@@ -181,7 +181,7 @@ public class QuestionServiceTest
     var quesitonId = 1;
 
     A.CallTo(() => _questionRepository.GetById(quesitonId))
-      .Returns(Task.FromResult<BaseQuestion?>(null));
+      .Returns(Task.FromResult<Question?>(null));
     try
     {
       var result = await _questionService.PatchQuestion(quesitonId, updateQuestionDTO);

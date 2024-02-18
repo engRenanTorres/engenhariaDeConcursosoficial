@@ -21,5 +21,5 @@ public class Concurso : IEntity
 
   public required Institute Institute { get; set; }
 
-  public IEnumerable<BaseQuestion> Questions { get; set; } = new List<BaseQuestion>();
+  public IEnumerable<Question> Questions { get; set; } = new List<Question>();
 }

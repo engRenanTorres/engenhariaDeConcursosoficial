@@ -9,9 +9,9 @@ public interface IQuestionRepository
   public Task<int?> GetCount();
   public Task<ViewQuestionDto?> GetCompleteById(int id);
   public Task<int?> GetLastId();
-  void Add(BaseQuestion question, string creatorName);
+  void Add(Question question, string creatorName);
   Task<bool> SaveChanges();
-  void Edit(BaseQuestion question, string editorName);
-  Task<BaseQuestion?> GetById(int id);
-  void Remove(BaseQuestion question);
+  void Edit(Question question, string editorName);
+  Task<Question?> GetById(int id);
+  void Remove(Question question);
 }

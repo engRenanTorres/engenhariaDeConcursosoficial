@@ -61,7 +61,7 @@ public class QuestionService : IQuestionService
     return numberOfQuestion ?? 0;
   }
 
-  public async Task<BaseQuestion> Create(CreateQuestionDTO questionDto)
+  public async Task<Question> Create(CreateQuestionDTO questionDto)
   {
     var creatorName =
       _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to create.");
@@ -73,42 +73,29 @@ public class QuestionService : IQuestionService
       ?? throw new NotFoundException("Concurso not found.");
     QuestionLevel qlevel =
       await _qlevelService.GetById(questionDto.ConcursoId)
-      ?? throw new NotFoundException("Concurso not found.");
+      ?? throw new NotFoundException("Level not found.");
 
-    BaseQuestion question;
+    Question question;
 
+    var choices = new List<Choice>();
     if (questionDto.Choices != null)
     {
-      var choices = new List<Choice>();
       foreach (var choice in questionDto.Choices)
       {
         choices.Add(new Choice() { Letter = choice.Letter.ToCharArray()[0], Text = choice.Text });
       }
-      question = new MultipleChoicesQuestion()
-      {
-        Body = questionDto.Body,
-        Answer = questionDto.Answer.ToCharArray()[0],
-        Tip = questionDto.Tip ?? "",
-        CreatedAt = DateTime.UtcNow,
-        Subject = subject,
-        Choices = choices,
-        Concurso = concurso,
-        QuestionLevel = qlevel,
-      };
     }
-    else
+    question = new Question()
     {
-      question = new BooleanQuestion()
-      {
-        Body = questionDto.Body,
-        Answer = questionDto.Answer.ToCharArray()[0],
-        Tip = questionDto.Tip ?? "",
-        CreatedAt = DateTime.UtcNow,
-        Subject = subject,
-        Concurso = concurso,
-        QuestionLevel = qlevel,
-      };
-    }
+      Body = questionDto.Body,
+      Answer = questionDto.Answer.ToCharArray()[0],
+      Tip = questionDto.Tip ?? "",
+      CreatedAt = DateTime.UtcNow,
+      Subject = subject,
+      Choices = choices,
+      Concurso = concurso,
+      QuestionLevel = qlevel,
+    };
 
     _questionRepository.Add(question, creatorName);
     if (await _questionRepository.SaveChanges())
@@ -122,7 +109,7 @@ public class QuestionService : IQuestionService
   {
     _logger.LogInformation("Delete Question has been called.");
 
-    BaseQuestion question =
+    Question question =
       await _questionRepository.GetById(id)
       ?? throw new NotFoundException("Question id: " + id + " not found");
 
@@ -132,10 +119,10 @@ public class QuestionService : IQuestionService
     throw new DatabaseException("Error while deleting question " + id);
   }
 
-  public async Task<BaseQuestion> PatchQuestion(int id, UpdateQuestionDTO updateQuestionDTO)
+  public async Task<Question> PatchQuestion(int id, UpdateQuestionDTO updateQuestionDTO)
   {
     _logger.LogInformation("Patch QuestionService has been called.");
-    BaseQuestion question =
+    Question question =
       await _questionRepository.GetById(id)
       ?? throw new NotFoundException("Question id: " + id + " not found");
 
@@ -146,7 +133,7 @@ public class QuestionService : IQuestionService
     if (updateQuestionDTO.Tip != null)
       question.Tip = updateQuestionDTO.Tip;
     question.LastUpdatedAt = DateTime.UtcNow;
-    if (updateQuestionDTO.Choices != null && question is MultipleChoicesQuestion)
+    if (updateQuestionDTO.Choices != null)
     {
       var choices = new List<Choice>();
       foreach (var choice in updateQuestionDTO.Choices)

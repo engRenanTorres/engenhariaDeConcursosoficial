@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entities.Inharitance;
 
 [Table("Questions")]
-public abstract class BaseQuestion
+public class Question
 {
   [Key]
   public int Id { get; set; }
@@ -20,8 +20,7 @@ public abstract class BaseQuestion
   public required QuestionLevel QuestionLevel { get; set; }
   public required Concurso Concurso { get; set; }
   public required Subject Subject { get; set; }
-  protected ICollection<Choice> _choices = new List<Choice>();
   public AppUser? CreatedBy { get; set; }
   public AppUser? EditedBy { get; set; }
-  public abstract ICollection<Choice> Choices { get; set; }
+  public ICollection<Choice>? Choices { get; set; }
 }

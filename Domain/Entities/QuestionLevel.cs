@@ -14,5 +14,5 @@ public class QuestionLevel : IEntity
   public DateTime CreatedAt { get; set; }
   public string Name { get; set; } = "";
   public string About { get; set; } = "";
-  public IEnumerable<BaseQuestion> Questions { get; set; } = new List<BaseQuestion>();
+  public IEnumerable<Question> Questions { get; set; } = new List<Question>();
 }

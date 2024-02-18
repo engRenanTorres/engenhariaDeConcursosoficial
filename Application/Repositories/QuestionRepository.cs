@@ -1,6 +1,9 @@
 using Apllication.DTOs;
 using Apllication.Repositories.Interfaces;
 using Application.DTOs;
+using Application.DTOs.Concurso;
+using Application.DTOs.SubjectDto;
+using Domain.Entities;
 using Domain.Entities.Inharitance;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
@@ -20,10 +23,7 @@ public class QuestionRepository : IQuestionRepository
   {
     if (_context.BaseQuestions != null)
     {
-      IEnumerable<ViewQuestionDto?> questions = await _context
-        .BaseQuestions.Include(x => x.Choices)
-        .Include(q => q.CreatedBy)
-        .Select(q => ParseToViewQuestionDto(q))
+      IEnumerable<ViewQuestionDto?> questions = await BaseQuestionQuery()
         .AsQueryable()
         .ToListAsync();
       return questions;
@@ -35,24 +35,48 @@ public class QuestionRepository : IQuestionRepository
   {
     if (_context.BaseQuestions != null)
     {
-      ViewQuestionDto? question = await _context
-        .BaseQuestions.Include(q => q.Choices)
-        .Include(q => q.CreatedBy)
-        .Select(q => ParseToViewQuestionDto(q))
-        .SingleOrDefaultAsync(u => u.Id == id);
+      ViewQuestionDto? question = await BaseQuestionQuery().SingleOrDefaultAsync(q => q.Id == id);
       return question;
     }
     throw new Exception("Questions repo is not set");
   }
 
-  private static ViewQuestionDto ParseToViewQuestionDto(BaseQuestion baseQuestion)
+  private IQueryable<ViewQuestionDto?> BaseQuestionQuery()
+  {
+    return _context
+      .BaseQuestions.Include(q => q.Choices)
+      .Include(q => q.Concurso)
+      .Include(q => q.Concurso.Institute)
+      .Include(q => q.Subject)
+      .Include(q => q.Subject.StudyArea)
+      .Include(q => q.QuestionLevel)
+      .Include(q => q.CreatedBy)
+      .Select(q => ParseToViewQuestionDto(q));
+  }
+
+  private static ViewQuestionDto ParseToViewQuestionDto(Question baseQuestion)
   {
     return new ViewQuestionDto()
     {
       Id = baseQuestion.Id,
       Answer = baseQuestion.Answer,
       Body = baseQuestion.Body,
-      Choices = baseQuestion.Choices,
+      Level = baseQuestion.QuestionLevel.Name,
+      Subject = baseQuestion.Subject.Name,
+      StudyArea = baseQuestion.Subject.StudyArea.Name,
+      Concurso = new ViewConcursoDto()
+      {
+        Name = baseQuestion.Concurso.Name,
+        Year = baseQuestion.Concurso.Year,
+        InstituteName = baseQuestion.Concurso.Institute.Name,
+      },
+      Choices =
+        baseQuestion.Choices
+        ?? new List<Choice>()
+        {
+          new Choice { Letter = 'A', Text = "Verdadeiro" },
+          new Choice { Letter = 'B', Text = "Falso" }
+        },
       CreatedAt = baseQuestion.CreatedAt,
       CreatedBy = new UserDto()
       {
@@ -89,7 +113,7 @@ public class QuestionRepository : IQuestionRepository
     throw new Exception("Questions repo is not set");
   }
 
-  public async void Add(BaseQuestion question, string creatorName)
+  public async void Add(Question question, string creatorName)
   {
     var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == creatorName);
     question.CreatedBy = user;
@@ -99,7 +123,7 @@ public class QuestionRepository : IQuestionRepository
     }
   }
 
-  public async void Edit(BaseQuestion question, string editorName)
+  public async void Edit(Question question, string editorName)
   {
     var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == editorName);
     question.EditedBy = user;
@@ -109,7 +133,7 @@ public class QuestionRepository : IQuestionRepository
     }
   }
 
-  public void Remove(BaseQuestion entity)
+  public void Remove(Question entity)
   {
     if (entity != null)
     {
@@ -117,9 +141,9 @@ public class QuestionRepository : IQuestionRepository
     }
   }
 
-  public async Task<BaseQuestion?> GetById(int id)
+  public async Task<Question?> GetById(int id)
   {
-    BaseQuestion? entity = await _context.BaseQuestions.FirstOrDefaultAsync(x => x.Id == id);
+    Question? entity = await _context.BaseQuestions.FirstOrDefaultAsync(x => x.Id == id);
     return entity;
   }
 
