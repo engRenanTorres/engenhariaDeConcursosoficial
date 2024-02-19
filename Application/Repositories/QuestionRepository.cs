@@ -2,9 +2,8 @@ using Apllication.DTOs;
 using Apllication.Repositories.Interfaces;
 using Application.DTOs;
 using Application.DTOs.Concurso;
-using Application.DTOs.SubjectDto;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 
@@ -21,7 +20,7 @@ public class QuestionRepository : IQuestionRepository
 
   public async Task<IEnumerable<ViewQuestionDto?>> GetAllComplete()
   {
-    if (_context.BaseQuestions != null)
+    if (_context.Questions != null)
     {
       IEnumerable<ViewQuestionDto?> questions = await BaseQuestionQuery()
         .AsQueryable()
@@ -33,7 +32,7 @@ public class QuestionRepository : IQuestionRepository
 
   public async Task<ViewQuestionDto?> GetCompleteById(int id)
   {
-    if (_context.BaseQuestions != null)
+    if (_context.Questions != null)
     {
       ViewQuestionDto? question = await BaseQuestionQuery().SingleOrDefaultAsync(q => q.Id == id);
       return question;
@@ -44,22 +43,21 @@ public class QuestionRepository : IQuestionRepository
   private IQueryable<ViewQuestionDto?> BaseQuestionQuery()
   {
     return _context
-      .BaseQuestions.Include(q => q.Choices)
+      .Questions.Include(q => ((ChoicesQuestion)q).Choices)
       .Include(q => q.Concurso)
       .Include(q => q.Concurso.Institute)
       .Include(q => q.Subject)
       .Include(q => q.Subject.StudyArea)
       .Include(q => q.QuestionLevel)
-      .Include(q => q.CreatedBy)
+      .Include(q => q.InsertedBy)
       .Select(q => ParseToViewQuestionDto(q));
   }
 
   private static ViewQuestionDto ParseToViewQuestionDto(Question baseQuestion)
   {
-    return new ViewQuestionDto()
+    var viewQuestion = new ViewQuestionDto()
     {
       Id = baseQuestion.Id,
-      Answer = baseQuestion.Answer,
       Body = baseQuestion.Body,
       Level = baseQuestion.QuestionLevel.Name,
       Subject = baseQuestion.Subject.Name,
@@ -70,18 +68,11 @@ public class QuestionRepository : IQuestionRepository
         Year = baseQuestion.Concurso.Year,
         InstituteName = baseQuestion.Concurso.Institute.Name,
       },
-      Choices =
-        baseQuestion.Choices
-        ?? new List<Choice>()
-        {
-          new Choice { Letter = 'A', Text = "Verdadeiro" },
-          new Choice { Letter = 'B', Text = "Falso" }
-        },
-      CreatedAt = baseQuestion.CreatedAt,
-      CreatedBy = new UserDto()
+      InsertedAt = baseQuestion.InsertedAt,
+      InsertedBy = new UserDto()
       {
-        DisplayName = baseQuestion.CreatedBy?.DisplayName ?? "",
-        Username = baseQuestion.CreatedBy?.UserName ?? "",
+        DisplayName = baseQuestion.InsertedBy?.DisplayName ?? "",
+        Username = baseQuestion.InsertedBy?.UserName ?? "",
       },
       EditedBy = new UserDto()
       {
@@ -91,13 +82,24 @@ public class QuestionRepository : IQuestionRepository
       LastUpdatedAt = baseQuestion.LastUpdatedAt,
       Tip = baseQuestion.Tip
     };
+    if (baseQuestion is ChoicesQuestion)
+    {
+      viewQuestion.Choices = ((ChoicesQuestion)baseQuestion).Choices ?? new List<Choice>();
+      viewQuestion.Answer = ((ChoicesQuestion)baseQuestion).Answer;
+      if (viewQuestion.Choices.Count == 0)
+      {
+        viewQuestion.Choices.Add(new Choice { Letter = 'A', Text = "Verdadeiro" });
+        viewQuestion.Choices.Add(new Choice { Letter = 'B', Text = "Falso" });
+      }
+    }
+    return viewQuestion;
   }
 
   public async Task<int?> GetCount()
   {
-    if (_context.BaseQuestions != null)
+    if (_context.Questions != null)
     {
-      int? id = await _context.BaseQuestions.CountAsync();
+      int? id = await _context.Questions.CountAsync();
       return id;
     }
     throw new Exception("Questions repo is not set");
@@ -105,9 +107,9 @@ public class QuestionRepository : IQuestionRepository
 
   public async Task<int?> GetLastId()
   {
-    if (_context.BaseQuestions != null)
+    if (_context.Questions != null)
     {
-      int? id = await _context.BaseQuestions.MaxAsync(q => q.Id);
+      int? id = await _context.Questions.MaxAsync(q => q.Id);
       return id;
     }
     throw new Exception("Questions repo is not set");
@@ -116,10 +118,10 @@ public class QuestionRepository : IQuestionRepository
   public async void Add(Question question, string creatorName)
   {
     var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == creatorName);
-    question.CreatedBy = user;
+    question.InsertedBy = user;
     if (question != null)
     {
-      _context.BaseQuestions.Add(question);
+      _context.Questions.Add(question);
     }
   }
 
@@ -137,13 +139,13 @@ public class QuestionRepository : IQuestionRepository
   {
     if (entity != null)
     {
-      _context.BaseQuestions.Remove(entity);
+      _context.Questions.Remove(entity);
     }
   }
 
   public async Task<Question?> GetById(int id)
   {
-    Question? entity = await _context.BaseQuestions.FirstOrDefaultAsync(x => x.Id == id);
+    Question? entity = await _context.Questions.FirstOrDefaultAsync(x => x.Id == id);
     return entity;
   }
 

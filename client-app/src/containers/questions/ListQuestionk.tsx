@@ -20,7 +20,7 @@ const questionsDefault: Question[] = [
         about: '00000000002',
       },
     },
-    questionsChoices: [
+    choices: [
       { id: 1, choice: 'A) sim' },
       { id: 2, choice: 'B) não' },
     ],
@@ -36,7 +36,7 @@ const questionsDefault: Question[] = [
         contact: 'adm@adm.com',
       },
     },
-    createdBy: {
+    InsertedBy: {
       id: 1,
       name: 'Adm',
       email: 'adm@adm.com',
@@ -44,7 +44,7 @@ const questionsDefault: Question[] = [
       cnpj: '00000000000',
     },
     id: 1,
-    createdAt: '2023-05-11',
+    InsertedAt: '2023-05-11',
   },
 ];
 function ListQuestionContent() {
@@ -75,7 +75,7 @@ function ListQuestionContent() {
           <div>
             <p className="lg:text-justify">Questão de id: {question.id}</p>
             <p className="lg:text-justify py-5">{question.question}</p>
-            {question.questionsChoices.map((choice) => (
+            {question.choices.map((choice) => (
               <p
                 key={uuidV4()}
                 className="border border-black rounded-lg dark:border-white p-2 m-4"
@@ -102,8 +102,8 @@ function ListQuestionContent() {
               <p>{question.level.name}</p>
             </div>
             <p className="border-b w-fit border-black dark:border-neutral-200 text-xs">
-              Criada em <br /> <span>{question.createdAt} por </span>{' '}
-              {question.createdBy.name}
+              Criada em <br /> <span>{question.InsertedAt} por </span>{' '}
+              {question.InsertedBy.name}
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 using Apllication.DTOs.Institute;
 using Application.DTOs.Institute;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 
 namespace Apllication.Services.Interfaces;
 

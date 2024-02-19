@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Domain.Entities.Inharitance;
 using Domain.Entities.Interfaces;
+using Domain.Entities.Questions;
 
 namespace Domain.Entities;
 

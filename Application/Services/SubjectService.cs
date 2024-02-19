@@ -5,7 +5,7 @@ using Apllication.Services.Interfaces;
 using Application.DTOs.SubjectDto;
 using Application.Errors.Exceptions;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.Extensions.Logging;
 
 namespace Apllication.Services;

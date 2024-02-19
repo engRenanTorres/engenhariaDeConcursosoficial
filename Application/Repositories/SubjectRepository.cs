@@ -2,7 +2,7 @@ using Apllication.Data.Repositories;
 using Apllication.Repositories.Interfaces;
 using Application.DTOs.SubjectDto;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 

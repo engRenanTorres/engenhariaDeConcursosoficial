@@ -1,5 +1,5 @@
 using Application.DTOs;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 
 namespace Apllication.Repositories.Interfaces;
 

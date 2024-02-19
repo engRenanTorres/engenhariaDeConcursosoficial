@@ -1,5 +1,5 @@
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
@@ -89,7 +89,7 @@ public class Seed
         await contextEF.SaveChangesAsync();
       }
 
-      if (contextEF.BaseQuestions.Any())
+      if (contextEF.Questions.Any())
         return;
 
       var choiceA = new Choice() { Letter = 'A', Text = "Jéssica" };
@@ -97,14 +97,14 @@ public class Seed
       var choiceC = new Choice() { Letter = 'C', Text = "Alfredo" };
       var choiceD = new Choice() { Letter = 'D', Text = "Alberto" };
 
-      var questions = new List<Question>
+      var questions = new List<ChoicesQuestion>
       {
         new()
         {
           Answer = 'A',
           Body = "Renan é foda!",
-          CreatedAt = DateTime.UtcNow,
-          CreatedBy = _creator,
+          InsertedAt = DateTime.UtcNow,
+          InsertedBy = _creator,
           QuestionLevel = level1,
           Concurso = concurso1,
           Subject = subject,
@@ -113,31 +113,41 @@ public class Seed
         {
           Answer = 'B',
           Body = "Renan é chato!",
-          CreatedAt = DateTime.UtcNow,
-          CreatedBy = _creator,
+          InsertedAt = DateTime.UtcNow,
+          InsertedBy = _creator,
           QuestionLevel = level1,
           Concurso = concurso1,
           Subject = subject,
         },
-      };
-
-      var questionsMultipleChoice = new List<Question>
-      {
         new()
         {
           Answer = 'B',
           Body = "Quem é o mais legal?",
-          CreatedAt = DateTime.UtcNow,
+          InsertedAt = DateTime.UtcNow,
           LastUpdatedAt = DateTime.UtcNow,
-          CreatedBy = _creator,
+          InsertedBy = _creator,
           QuestionLevel = level1,
           Concurso = concurso1,
           Subject = subject,
           Choices = new List<Choice>() { choiceA, choiceB, choiceC, choiceD }
         }
       };
-      await contextEF.BaseQuestions.AddRangeAsync(questions);
-      await contextEF.BaseQuestions.AddRangeAsync(questionsMultipleChoice);
+
+      var questionsMultipleChoice = new List<DiscursiveQuestion>
+      {
+        new()
+        {
+          Body = "Disserte sobre o quanto o Renan é legal?",
+          InsertedAt = DateTime.UtcNow,
+          LastUpdatedAt = DateTime.UtcNow,
+          InsertedBy = _creator,
+          QuestionLevel = level1,
+          Concurso = concurso1,
+          Subject = subject,
+        }
+      };
+      await contextEF.Questions.AddRangeAsync(questions);
+      await contextEF.Questions.AddRangeAsync(questionsMultipleChoice);
       await contextEF.SaveChangesAsync();
     }
   }

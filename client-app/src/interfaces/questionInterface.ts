@@ -9,11 +9,11 @@ export interface Question {
   level: Level;
   subject: Subject;
   question: string;
-  answer: 'A' | 'B' | 'C' | 'D' | 'E' | 'V' | 'F';
-  questionsChoices: { id: number; choice: string }[];
+  answer?: 'A' | 'B' | 'C' | 'D' | 'E';
+  choices?: { id: number; choice: string }[];
   tip: string;
-  createdBy: User;
-  createdAt: string;
+  InsertedBy: User;
+  InsertedAt: string;
   lastUpdateBy?: User;
   lastUpdateAt?: string;
 }

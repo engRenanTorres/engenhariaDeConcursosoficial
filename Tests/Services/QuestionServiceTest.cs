@@ -6,7 +6,7 @@ using Apllication.Services;
 using Apllication.Services.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.Extensions.Logging;
 
 namespace Tests;
@@ -21,7 +21,7 @@ public class QuestionServiceTest
   private readonly ISubjectService _subjectService;
   private readonly IConcursoService _concursoService;
   private readonly IQLevelService _qLevelService;
-  private readonly MultipleChoicesQuestion _question;
+  private readonly ChoicesQuestion _question;
   private readonly DateTime _createdAt = new(2020, 07, 02, 22, 59, 59);
   private readonly ViewQuestionDto _viewQuestionDto;
   private readonly AppUser _appUser =
@@ -59,11 +59,11 @@ public class QuestionServiceTest
     _question = new()
     {
       Id = 1,
-      CreatedBy = _appUser,
+      InsertedBy = _appUser,
       QuestionLevel = _questionLevel,
       Concurso = _concurso,
       Subject = _subject,
-      CreatedAt = _createdAt,
+      InsertedAt = _createdAt,
       LastUpdatedAt = new DateTime(2020, 07, 02, 22, 59, 59),
       Body = "Is this a quetion Test?",
       Answer = 'A',
@@ -72,15 +72,24 @@ public class QuestionServiceTest
     _viewQuestionDto = new ViewQuestionDto
     {
       Id = _question.Id,
-      CreatedAt = _question.CreatedAt,
+      InsertedAt = _question.InsertedAt,
       LastUpdatedAt = _question.LastUpdatedAt,
       Body = _question.Body,
       Answer = _question.Answer,
       Tip = _question.Tip,
-      CreatedBy = new UserDto
+      Subject = _question.Subject.Name,
+      Level = _question.QuestionLevel.Name,
+      StudyArea = _question.Subject.StudyArea.Name,
+      Concurso = new()
       {
-        DisplayName = _question.CreatedBy.DisplayName,
-        Username = _question.CreatedBy.UserName,
+        Name = _question.Concurso.Name,
+        InstituteName = _question.Concurso.Institute.Name,
+        Year = _question.Concurso.Year,
+      },
+      InsertedBy = new UserDto
+      {
+        DisplayName = _question.InsertedBy.DisplayName,
+        Username = _question.InsertedBy.UserName,
       }
     };
     _questionRepository = A.Fake<IQuestionRepository>();
@@ -214,14 +223,13 @@ public class QuestionServiceTest
 
     var result = await _questionService.Create(questionDTO);
 
-    result?.Answer.Should().Be(_question.Answer);
+    ((ChoicesQuestion)result)?.Answer.Should().Be(_question.Answer);
     result?.Body.Should().Be(_question.Body);
-    result?.Body.Should().Be(_question.Body);
-    result.Should().BeOfType<MultipleChoicesQuestion>();
+    result?.Should().BeOfType<ChoicesQuestion>();
   }
 
   [Fact]
-  public async Task CreateQuestion_ShouldReturnBooleanQuestion_WhenCreateQuestionWithoutChoices()
+  public async Task CreateQuestion_ShouldReturnTrueFalseQuestion_WhenCreateQuestionWithoutChoices()
   {
     var questionDTO = new CreateQuestionDTO()
     {
@@ -233,14 +241,32 @@ public class QuestionServiceTest
     };
 
     A.CallTo(() => _questionRepository.Add(_question, _appUser.UserName));
-    //A.CallTo(() => _userService.GetUser(int.Parse(userId))).Returns(Task.FromResult<User?>(_user));
     A.CallTo(() => _questionRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
 
     var result = await _questionService.Create(questionDTO);
 
-    result?.Answer.Should().Be(_question.Answer);
+    result?.Body.Should().Be(_question.Body);
+    result?.Should().BeOfType<ChoicesQuestion>();
+  }
+
+  [Fact]
+  public async Task CreateQuestion_ShouldReturnDiscursiveQuestion_WhenCreateQuestionWithoutChoices()
+  {
+    var questionDTO = new CreateQuestionDTO()
+    {
+      Body = "Is this a quetion Test?",
+      SubjectId = _subject.Id,
+      ConcursoId = _concurso.Id,
+      Tip = "A",
+    };
+
+    A.CallTo(() => _questionRepository.Add(_question, _appUser.UserName));
+    A.CallTo(() => _questionRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+
+    var result = await _questionService.Create(questionDTO);
+
     result?.Body.Should().Be(_question.Body);
     result?.Body.Should().Be(_question.Body);
-    result.Should().BeOfType<BooleanQuestion>();
+    result?.Should().BeOfType<DiscursiveQuestion>();
   }
 }

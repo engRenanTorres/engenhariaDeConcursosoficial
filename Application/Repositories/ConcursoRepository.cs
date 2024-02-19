@@ -1,7 +1,7 @@
 using Apllication.Data.Repositories;
 using Apllication.Repositories.Interfaces;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Persistence.Data;
 
 namespace Application.Data.Repositories;

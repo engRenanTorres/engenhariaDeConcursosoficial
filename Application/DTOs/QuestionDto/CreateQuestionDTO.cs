@@ -14,7 +14,7 @@ public class CreateQuestionDTO
     @"^[A|B|C|D|E]$",
     ErrorMessage = "Answer field accepts only the values A, B, C, D, or E."
   )]
-  public string Answer { get; set; } = "A";
+  public string? Answer { get; set; }
 
   [Required]
   public required Guid SubjectId { get; set; }

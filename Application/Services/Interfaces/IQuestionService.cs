@@ -1,7 +1,7 @@
 using Apllication.DTOs;
 using Apllication.Repositories;
 using Application.DTOs;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 
 namespace Apllication.Services.Interfaces;
 

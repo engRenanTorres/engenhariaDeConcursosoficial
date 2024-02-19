@@ -6,8 +6,9 @@ using Apllication.Services.Interfaces;
 using Application.DTOs;
 using Application.Errors.Exceptions;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Apllication.Services;
 
@@ -77,25 +78,40 @@ public class QuestionService : IQuestionService
 
     Question question;
 
-    var choices = new List<Choice>();
-    if (questionDto.Choices != null)
+    if (questionDto.Answer != null)
     {
-      foreach (var choice in questionDto.Choices)
+      question = new ChoicesQuestion()
       {
-        choices.Add(new Choice() { Letter = choice.Letter.ToCharArray()[0], Text = choice.Text });
+        Body = questionDto.Body,
+        Answer = questionDto.Answer.ToCharArray()[0],
+        Tip = questionDto.Tip ?? "",
+        InsertedAt = DateTime.UtcNow,
+        Subject = subject,
+        Concurso = concurso,
+        QuestionLevel = qlevel,
+      };
+      if (questionDto.Choices != null)
+      {
+        var choices = new List<Choice>();
+        foreach (var choice in questionDto.Choices)
+        {
+          choices.Add(new Choice() { Letter = choice.Letter.ToCharArray()[0], Text = choice.Text });
+        }
+        ((ChoicesQuestion)question).Choices = choices;
       }
     }
-    question = new Question()
+    else
     {
-      Body = questionDto.Body,
-      Answer = questionDto.Answer.ToCharArray()[0],
-      Tip = questionDto.Tip ?? "",
-      CreatedAt = DateTime.UtcNow,
-      Subject = subject,
-      Choices = choices,
-      Concurso = concurso,
-      QuestionLevel = qlevel,
-    };
+      question = new DiscursiveQuestion()
+      {
+        Body = questionDto.Body,
+        Tip = questionDto.Tip ?? "",
+        InsertedAt = DateTime.UtcNow,
+        Subject = subject,
+        Concurso = concurso,
+        QuestionLevel = qlevel,
+      };
+    }
 
     _questionRepository.Add(question, creatorName);
     if (await _questionRepository.SaveChanges())
@@ -128,19 +144,22 @@ public class QuestionService : IQuestionService
 
     if (updateQuestionDTO.Body != null)
       question.Body = updateQuestionDTO.Body;
-    if (updateQuestionDTO.Answer != null)
-      question.Answer = (char)updateQuestionDTO.Answer;
     if (updateQuestionDTO.Tip != null)
       question.Tip = updateQuestionDTO.Tip;
     question.LastUpdatedAt = DateTime.UtcNow;
-    if (updateQuestionDTO.Choices != null)
+    if (question is ChoicesQuestion)
     {
-      var choices = new List<Choice>();
-      foreach (var choice in updateQuestionDTO.Choices)
+      if (updateQuestionDTO.Answer != null)
+        ((ChoicesQuestion)question).Answer = (char)updateQuestionDTO.Answer;
+      if (updateQuestionDTO.Choices != null)
       {
-        choices.Add(new Choice() { Letter = choice.Letter.ToCharArray()[0], Text = choice.Text });
+        var choices = new List<Choice>();
+        foreach (var choice in updateQuestionDTO.Choices)
+        {
+          choices.Add(new Choice() { Letter = choice.Letter.ToCharArray()[0], Text = choice.Text });
+        }
+        ((ChoicesQuestion)question).Choices = choices;
       }
-      question.Choices = choices;
     }
 
     var editorName =

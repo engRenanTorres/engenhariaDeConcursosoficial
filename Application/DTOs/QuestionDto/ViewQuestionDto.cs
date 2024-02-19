@@ -19,8 +19,8 @@ public class ViewQuestionDto
   public required string Level { get; set; }
 
   public ICollection<Choice> Choices { get; set; } = [];
-  public DateTime CreatedAt { get; set; }
-  public UserDto? CreatedBy { get; set; }
+  public DateTime InsertedAt { get; set; }
+  public UserDto? InsertedBy { get; set; }
 
   public UserDto? EditedBy { get; set; }
   public DateTime LastUpdatedAt { get; set; }

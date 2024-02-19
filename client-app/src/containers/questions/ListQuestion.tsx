@@ -48,7 +48,7 @@ function ListQuestionContent() {
               <div>
                 <p className="lg:text-justify">Questão de id: {question.id}</p>
                 <p className="lg:text-justify py-5">{question.question}</p>
-                {question.questionsChoices.map((choice) => (
+                {question.choices.map((choice) => (
                   <p
                     key={choice.id}
                     className="border border-black rounded-lg dark:border-white p-2 m-4"
@@ -75,8 +75,8 @@ function ListQuestionContent() {
                   <p>{question.level.name}</p>
                 </div>
                 <p className="border-b w-fit border-black dark:border-neutral-200 text-xs">
-                  Criada em <br /> <span>{question.createdAt} por </span>{' '}
-                  {question.createdBy.name}
+                  Criada em <br /> <span>{question.InsertedAt} por </span>{' '}
+                  {question.InsertedBy.name}
                 </p>
               </div>
             </div>

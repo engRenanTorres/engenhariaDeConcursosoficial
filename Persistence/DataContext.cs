@@ -1,5 +1,5 @@
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +13,9 @@ public class DataContext : IdentityDbContext<AppUser>
     // _conectionString = config.GetConnectionString("DefaultConnection");
   }
 
-  public DbSet<Question> BaseQuestions { get; set; }
+  public DbSet<Question> Questions { get; set; }
+  public DbSet<ChoicesQuestion> ChoicesQuestions { get; set; }
+  public DbSet<DiscursiveQuestion> DiscursiveQuestions { get; set; }
   public DbSet<Choice> Choices { get; set; }
   public DbSet<Concurso> Concursos { get; set; }
   public DbSet<Institute> Institutes { get; set; }
@@ -25,7 +27,7 @@ public class DataContext : IdentityDbContext<AppUser>
   {
     base.OnModelCreating(modelBuilder);
     modelBuilder.Entity<AppUser>().HasKey(u => u.Id);
-    modelBuilder.Entity<Question>().HasOne(x => x.CreatedBy).WithMany(x => x.Questions);
+    modelBuilder.Entity<Question>().HasOne(x => x.InsertedBy).WithMany(x => x.Questions);
     modelBuilder
       .Entity<Institute>()
       .HasMany(x => x.Concursos)
@@ -37,7 +39,7 @@ public class DataContext : IdentityDbContext<AppUser>
       .WithOne(x => x.Concurso)
       .OnDelete(DeleteBehavior.Cascade);
     modelBuilder
-      .Entity<Question>()
+      .Entity<ChoicesQuestion>()
       .HasMany(x => x.Choices)
       .WithOne()
       .OnDelete(DeleteBehavior.Cascade);

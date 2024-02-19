@@ -4,7 +4,7 @@ using Apllication.Repositories.Interfaces;
 using Application.DTOs;
 using Application.DTOs.SubjectDto;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 
 namespace Apllication.Services.Interfaces;
 

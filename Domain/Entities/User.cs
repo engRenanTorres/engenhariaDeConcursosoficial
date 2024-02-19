@@ -1,4 +1,4 @@
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 

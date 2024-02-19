@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Data;
@@ -11,9 +12,11 @@ using Persistence.Data;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240218162752_AddDiscursiveAndChoice")]
+    partial class AddDiscursiveAndChoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,57 +156,7 @@ namespace Persistence.Migrations
                     b.ToTable("Concursos");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Institute", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("About")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Contact")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("Created_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Institutes");
-                });
-
-            modelBuilder.Entity("Domain.Entities.QuestionLevel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("About")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("Created_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuestionLevels");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Questions.Question", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.Question", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -262,6 +215,56 @@ namespace Persistence.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Question");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Institute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("About")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("Created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Institutes");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuestionLevel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("About")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("Created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionLevels");
                 });
 
             modelBuilder.Entity("Domain.Entities.StudyArea", b =>
@@ -447,9 +450,9 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Questions.ChoicesQuestion", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.ChoicesQuestion", b =>
                 {
-                    b.HasBaseType("Domain.Entities.Questions.Question");
+                    b.HasBaseType("Domain.Entities.Inharitance.Question");
 
                     b.Property<char>("Answer")
                         .HasColumnType("character(1)");
@@ -459,18 +462,9 @@ namespace Persistence.Migrations
                     b.HasDiscriminator().HasValue("ChoicesQuestion");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Questions.DiscursiveQuestion", b =>
-                {
-                    b.HasBaseType("Domain.Entities.Questions.Question");
-
-                    b.ToTable("Questions");
-
-                    b.HasDiscriminator().HasValue("DiscursiveQuestion");
-                });
-
             modelBuilder.Entity("Domain.Entities.Choice", b =>
                 {
-                    b.HasOne("Domain.Entities.Questions.ChoicesQuestion", null)
+                    b.HasOne("Domain.Entities.Inharitance.ChoicesQuestion", null)
                         .WithMany("Choices")
                         .HasForeignKey("ChoicesQuestionId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -487,7 +481,7 @@ namespace Persistence.Migrations
                     b.Navigation("Institute");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Questions.Question", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.Question", b =>
                 {
                     b.HasOne("Domain.Entities.Concurso", "Concurso")
                         .WithMany("Questions")
@@ -618,7 +612,7 @@ namespace Persistence.Migrations
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Questions.ChoicesQuestion", b =>
+            modelBuilder.Entity("Domain.Entities.Inharitance.ChoicesQuestion", b =>
                 {
                     b.Navigation("Choices");
                 });

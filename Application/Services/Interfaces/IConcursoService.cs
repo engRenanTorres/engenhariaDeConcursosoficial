@@ -1,7 +1,7 @@
 using Apllication.DTOs.Concurso;
 using Application.DTOs.Concurso;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 
 namespace Apllication.Services.Interfaces;
 

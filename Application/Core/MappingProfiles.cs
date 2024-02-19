@@ -1,7 +1,7 @@
 using Apllication.DTOs;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 
 namespace Apllication.Core;
 

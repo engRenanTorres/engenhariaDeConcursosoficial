@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Persistence.Data;
 using Persistence.Seed;
 
@@ -58,6 +59,16 @@ if (app.Environment.IsDevelopment())
   app.UseSwagger();
   app.UseSwaggerUI();
 }
+
+app.UseStaticFiles(
+  new StaticFileOptions
+  {
+    FileProvider = new PhysicalFileProvider(
+      Path.Combine(Directory.GetCurrentDirectory(), "static")
+    ),
+    RequestPath = "/static"
+  }
+);
 
 //app.UseHttpsRedirection();
 app.UseExceptionHandler(_ => { });

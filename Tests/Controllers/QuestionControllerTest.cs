@@ -6,7 +6,7 @@ using Apllication.Exceptions;
 using Apllication.Services.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
-using Domain.Entities.Inharitance;
+using Domain.Entities.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
