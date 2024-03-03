@@ -6,12 +6,12 @@ namespace Apllication.Services;
 
 public interface IAuthService
 {
-  public Task<UserDto?> Login(LoginDTO loginDTO);
+  public Task<LogedUserInfoDto?> Login(LoginDTO loginDTO);
   public string CreateToken(AppUser user);
-  public Task<UserDto> Register(CreateUserDto createUserDTO);
-  public Task<UserDto> GetCurrentUser(string email);
+  public Task<LogedUserInfoDto> Register(CreateUserDto createUserDTO);
+  public Task<LogedUserInfoDto> GetCurrentUser(string email);
   public Task AddRole(RoleDto roleDto);
   public Task RemoveRole(RoleDto roleDto);
-  Task<UserDto> Update(UpdateUserDto userDto);
-  //string? RefreshToken(string? authUserId, Roles role);
+  Task<LogedUserInfoDto> Update(UpdateUserDto userDto);
+  Task<LogedUserInfoDto?> RefreshToken(string? authEmail);
 }

@@ -22,6 +22,9 @@ public class CreateQuestionDTO
   [Required]
   public required Guid ConcursoId { get; set; }
 
+  [Required]
+  public required Guid LevelId { get; set; }
+
   public string? Tip { get; set; }
   public ICollection<ChoiceDto>? Choices { get; set; }
 }

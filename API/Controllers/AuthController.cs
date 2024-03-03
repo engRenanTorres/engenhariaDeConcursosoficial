@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Apllication.DTOs;
+using Apllication.Exceptions;
 using Apllication.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +23,7 @@ public class AuthController : ControllerBase
 
   [AllowAnonymous]
   [HttpPost("login")]
-  public async Task<ActionResult<UserDto>> Login([FromBody] LoginDTO loginDTO)
+  public async Task<ActionResult<LogedUserInfoDto>> Login([FromBody] LoginDTO loginDTO)
   {
     var loginResult = await _authService.Login(loginDTO);
     return loginResult == null ? Unauthorized() : Ok(loginResult);
@@ -30,7 +31,7 @@ public class AuthController : ControllerBase
 
   [AllowAnonymous]
   [HttpPost("Register")]
-  public async Task<ActionResult<UserDto>> Register([FromBody] CreateUserDto userDto)
+  public async Task<ActionResult<LogedUserInfoDto>> Register([FromBody] CreateUserDto userDto)
   {
     return await _authService.Register(userDto);
   }
@@ -52,16 +53,34 @@ public class AuthController : ControllerBase
 
   [Authorize(Roles = "Admin")]
   [HttpPost("RemoveRole")]
-  public async Task<ActionResult<UserDto>> RemoveRole([FromBody] RoleDto roleDto)
+  public async Task<ActionResult<LogedUserInfoDto>> RemoveRole([FromBody] RoleDto roleDto)
   {
     await _authService.RemoveRole(roleDto);
     return NoContent();
   }
 
   [HttpGet]
-  public async Task<ActionResult<UserDto>> GetCurrentUser()
+  public async Task<ActionResult<LogedUserInfoDto>> GetCurrentUser()
   {
-    var email = User.FindFirstValue(ClaimTypes.Email);
+    var email =
+      User.FindFirstValue(ClaimTypes.Email) ?? throw new NotFoundException("User not found.");
+
     return await _authService.GetCurrentUser(email);
+  }
+
+  [HttpGet("RefreshToken")]
+  public async Task<IActionResult> RefreshToken()
+  {
+    string? userLogedId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var user = User;
+
+    if (userLogedId == null)
+      return BadRequest("User is not Logged or dont has e-mail");
+
+    var token = await _authService.RefreshToken(userLogedId);
+    if (token == null)
+      return NotFound();
+    return Ok(token);
   }
 }

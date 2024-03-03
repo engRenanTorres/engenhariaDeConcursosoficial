@@ -1,8 +1,10 @@
+using Apllication.Core;
 using Apllication.DTOs;
 using Apllication.Exceptions;
 using Apllication.Interfaces;
 using Apllication.Repositories.Interfaces;
 using Apllication.Services.Interfaces;
+using Application.Core.PagedList;
 using Application.DTOs;
 using Application.Errors.Exceptions;
 using Domain.Entities;
@@ -38,9 +40,9 @@ public class QuestionService : IQuestionService
     _logger = logger;
   }
 
-  public async Task<IEnumerable<ViewQuestionDto?>> GetAllComplete()
+  public async Task<PagedList<ViewQuestionDto?>> GetAllComplete(PagingParams pagingParams)
   {
-    var questions = await _questionRepository.GetAllComplete();
+    var questions = await _questionRepository.GetAllComplete(pagingParams);
     return questions;
   }
 
@@ -73,7 +75,7 @@ public class QuestionService : IQuestionService
       await _concursoService.GetById(questionDto.ConcursoId)
       ?? throw new NotFoundException("Concurso not found.");
     QuestionLevel qlevel =
-      await _qlevelService.GetById(questionDto.ConcursoId)
+      await _qlevelService.GetById(questionDto.LevelId)
       ?? throw new NotFoundException("Level not found.");
 
     Question question;

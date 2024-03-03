@@ -1,5 +1,7 @@
+using Apllication.Core;
 using Apllication.DTOs;
 using Apllication.Repositories.Interfaces;
+using Application.Core.PagedList;
 using Application.DTOs;
 using Application.DTOs.Concurso;
 using Domain.Entities;
@@ -18,14 +20,17 @@ public class QuestionRepository : IQuestionRepository
     _context = context;
   }
 
-  public async Task<IEnumerable<ViewQuestionDto?>> GetAllComplete()
+  public async Task<PagedList<ViewQuestionDto?>> GetAllComplete(PagingParams pagingParams)
   {
     if (_context.Questions != null)
     {
-      IEnumerable<ViewQuestionDto?> questions = await BaseQuestionQuery()
-        .AsQueryable()
-        .ToListAsync();
-      return questions;
+      var questionsQuery = BaseQuestionQuery().AsQueryable();
+      var pagedList = await PagedList<ViewQuestionDto>.CreateAsync(
+        questionsQuery,
+        pagingParams.PageNumber,
+        pagingParams.PageSize
+      );
+      return pagedList;
     }
     throw new Exception("Questions repo is not set");
   }
@@ -72,12 +77,12 @@ public class QuestionRepository : IQuestionRepository
       InsertedBy = new UserDto()
       {
         DisplayName = baseQuestion.InsertedBy?.DisplayName ?? "",
-        Username = baseQuestion.InsertedBy?.UserName ?? "",
+        Id = baseQuestion.InsertedBy?.Id ?? "",
       },
       EditedBy = new UserDto()
       {
         DisplayName = baseQuestion.EditedBy?.DisplayName ?? "",
-        Username = baseQuestion.EditedBy?.UserName ?? "",
+        Id = baseQuestion.EditedBy?.Id ?? "",
       },
       LastUpdatedAt = baseQuestion.LastUpdatedAt,
       Tip = baseQuestion.Tip

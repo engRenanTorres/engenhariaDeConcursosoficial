@@ -1,9 +1,11 @@
+using Apllication.Core;
 using Apllication.DTOs;
 using Apllication.Exceptions;
 using Apllication.Interfaces;
 using Apllication.Repositories.Interfaces;
 using Apllication.Services;
 using Apllication.Services.Interfaces;
+using Application.Core.PagedList;
 using Application.DTOs;
 using Domain.Entities;
 using Domain.Entities.Questions;
@@ -86,7 +88,7 @@ public class QuestionServiceTest
         InstituteName = _question.Concurso.Institute.Name,
         Year = _question.Concurso.Year,
       },
-      InsertedBy = new UserDto
+      InsertedBy = new LogedUserInfoDto
       {
         DisplayName = _question.InsertedBy.DisplayName,
         Username = _question.InsertedBy.UserName,
@@ -122,16 +124,24 @@ public class QuestionServiceTest
   }
 
   [Fact]
-  public async Task GetAllQuestion_BDContainTheQuestion_ShouldReturnQuestions()
+  public async Task GetAllQuestion_BDContainTheQuestion_ShouldReturnPagedListQuestions()
   {
     var questions = new List<ViewQuestionDto> { _viewQuestionDto };
-    A.CallTo(() => _questionRepository.GetAllComplete()).Returns(questions);
+    var pagingParams = new PagingParams { PageNumber = 1, PageSize = 1 };
+    var countQuestions = questions.Count;
+    var pagedList = new PagedList<ViewQuestionDto>(
+      questions,
+      pagingParams.PageNumber,
+      pagingParams.PageSize,
+      countQuestions
+    );
+    A.CallTo(() => _questionRepository.GetAllComplete(pagingParams)).Returns(pagedList);
 
-    var result = await _questionService.GetAllComplete();
+    var result = await _questionService.GetAllComplete(pagingParams);
 
-    result?.Should().BeOfType<List<ViewQuestionDto>>();
+    result?.Should().BeOfType<PagedList<ViewQuestionDto>>();
 
-    result?.Should().BeSameAs(questions);
+    result?.Should().BeSameAs(pagedList);
   }
 
   [Fact]
@@ -150,7 +160,7 @@ public class QuestionServiceTest
   }
 
   [Fact]
-  public async Task DeleteQuestion_NotFoundQuestion_ShouldThrowWarning()
+  public async Task DeleteQuestion_NotFoundQuestion_ShouldThrowNotFound()
   {
     var questionId = 1;
 
@@ -211,6 +221,7 @@ public class QuestionServiceTest
       SubjectId = _subject.Id,
       ConcursoId = _concurso.Id,
       Tip = "A",
+      LevelId = _questionLevel.Id,
       Choices = new List<ChoiceDto>()
       {
         new() { Letter = "A", Text = "Alternativa Test" },
@@ -238,6 +249,7 @@ public class QuestionServiceTest
       SubjectId = _subject.Id,
       ConcursoId = _concurso.Id,
       Tip = "A",
+      LevelId = _questionLevel.Id
     };
 
     A.CallTo(() => _questionRepository.Add(_question, _appUser.UserName));
@@ -258,6 +270,7 @@ public class QuestionServiceTest
       SubjectId = _subject.Id,
       ConcursoId = _concurso.Id,
       Tip = "A",
+      LevelId = _questionLevel.Id
     };
 
     A.CallTo(() => _questionRepository.Add(_question, _appUser.UserName));

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { useQuery } from 'react-query';
 import { Question } from '../../interfaces/questionInterface';
@@ -6,8 +5,8 @@ import axiosClient from '../../utils/httpClient/axiosClient';
 
 const questionsDefault: Question[] = [
   {
-    question: 'Teria um erro no carregamento?',
-    answer: 'V',
+    body: 'Teria um erro no carregamento?',
+    answer: 'A',
     tip: 'questao muito facil',
     level: { id: 1, name: 'Superior', about: '00000000000' },
     subject: {
@@ -21,8 +20,8 @@ const questionsDefault: Question[] = [
       },
     },
     choices: [
-      { id: 1, choice: 'A) sim' },
-      { id: 2, choice: 'B) não' },
+      { id: 1, text: 'A) sim' },
+      { id: 2, text: 'B) não' },
     ],
     concurso: {
       id: 4,
@@ -36,7 +35,7 @@ const questionsDefault: Question[] = [
         contact: 'adm@adm.com',
       },
     },
-    InsertedBy: {
+    createdBy: {
       id: 1,
       name: 'Adm',
       email: 'adm@adm.com',
@@ -44,7 +43,7 @@ const questionsDefault: Question[] = [
       cnpj: '00000000000',
     },
     id: 1,
-    InsertedAt: '2023-05-11',
+    createdAt: '2023-05-11',
   },
 ];
 function ListQuestionContent() {
@@ -74,13 +73,13 @@ function ListQuestionContent() {
         >
           <div>
             <p className="lg:text-justify">Questão de id: {question.id}</p>
-            <p className="lg:text-justify py-5">{question.question}</p>
-            {question.choices.map((choice) => (
+            <p className="lg:text-justify py-5">{question.body}</p>
+            {question.choices?.map((choice) => (
               <p
                 key={uuidV4()}
                 className="border border-black rounded-lg dark:border-white p-2 m-4"
               >
-                {choice.choice}
+                {choice.text}
               </p>
             ))}
             <p className="pb-2">Resposta: {question.answer}</p>
@@ -102,8 +101,8 @@ function ListQuestionContent() {
               <p>{question.level.name}</p>
             </div>
             <p className="border-b w-fit border-black dark:border-neutral-200 text-xs">
-              Criada em <br /> <span>{question.InsertedAt} por </span>{' '}
-              {question.InsertedBy.name}
+              Criada em <br /> <span>{question.createdAt} por </span>{' '}
+              {question.createdBy.name}
             </p>
           </div>
         </div>

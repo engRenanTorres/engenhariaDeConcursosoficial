@@ -14,6 +14,33 @@ public static class ApplicationServiceExtensions
     IConfiguration configuration
   )
   {
+    services.AddCors(
+      (options) =>
+      {
+        options.AddPolicy(
+          "DevCors",
+          (corsBuilder) =>
+          {
+            corsBuilder
+              .WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+          }
+        );
+        options.AddPolicy(
+          "ProdCors",
+          (corsBuilder) =>
+          {
+            corsBuilder
+              .WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+          }
+        );
+      }
+    );
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(options =>
     {
@@ -58,33 +85,6 @@ public static class ApplicationServiceExtensions
     services.AddHttpContextAccessor();
     services.AddScoped<IUserAccessor, UserAccessor>();
 
-    services.AddCors(
-      (options) =>
-      {
-        options.AddPolicy(
-          "DevCors",
-          (corsBuilder) =>
-          {
-            corsBuilder
-              .WithOrigins("http://localhost:3000")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-          }
-        );
-        options.AddPolicy(
-          "ProdCors",
-          (corsBuilder) =>
-          {
-            corsBuilder
-              .WithOrigins("https://engenhariadeconcursos.com.br")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-          }
-        );
-      }
-    );
     return services;
   }
 }

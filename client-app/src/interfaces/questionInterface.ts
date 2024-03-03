@@ -1,19 +1,20 @@
 import Concurso from './concursoInterface';
-import Level from './levelInterface';
+//import Level from './levelInterface';
 import Subject from './subjectInterface';
 import { User } from './userInterface';
 
 export interface Question {
   id: number;
   concurso: Concurso;
-  level: Level;
+  level: string;
+  instituteName: string;
   subject: Subject;
-  question: string;
+  body: string;
   answer?: 'A' | 'B' | 'C' | 'D' | 'E';
-  choices?: { id: number; choice: string }[];
+  choices?: { id: number; letter: string; text: string }[];
   tip: string;
-  InsertedBy: User;
-  InsertedAt: string;
+  insertedBy: User;
+  insertedAt: string;
   lastUpdateBy?: User;
   lastUpdateAt?: string;
 }

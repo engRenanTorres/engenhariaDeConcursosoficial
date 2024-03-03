@@ -33,13 +33,43 @@ public class AuthService : IAuthService
     _userAccessor = userAccessor;
   }
 
+  public async Task<LogedUserInfoDto?> Login(LoginDTO loginDTO)
+  {
+    var user = await _userManager.FindByEmailAsync(loginDTO.Email);
+    if (user == null)
+      return null; //Unauthorized();
+
+    var autorizeResult = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
+    if (autorizeResult)
+    {
+      return ParseUserDto(user);
+    }
+    return null; // Unauthorized();
+  }
+
+  private LogedUserInfoDto ParseUserDto(AppUser user)
+  {
+    return new LogedUserInfoDto
+    {
+      Valid = true,
+      Credentials =
+      {
+        DisplayName = user?.DisplayName ?? "",
+        Token = this.CreateToken(user),
+        Id = user.Id,
+        RoleName = user.Role.ToString()
+        //Image= null,
+      }
+    };
+  }
+
   public string CreateToken(AppUser user)
   {
     var claims = new List<Claim>
     {
-      new Claim(ClaimTypes.Name, user.UserName),
+      new Claim(ClaimTypes.Name, user.UserName ?? ""),
       new Claim(ClaimTypes.NameIdentifier, user.Id),
-      new Claim(ClaimTypes.Email, user.Email),
+      new Claim(ClaimTypes.Role, user.Role.ToString()),
     };
 
     var key = new SymmetricSecurityKey(
@@ -60,21 +90,7 @@ public class AuthService : IAuthService
     return tokenHandler.WriteToken(token);
   }
 
-  public async Task<UserDto?> Login(LoginDTO loginDTO)
-  {
-    var user = await _userManager.FindByEmailAsync(loginDTO.Email);
-    if (user == null)
-      return null; //Unauthorized();
-
-    var autorizeResult = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
-    if (autorizeResult)
-    {
-      return ParseUserDto(user);
-    }
-    return null; // Unauthorized();
-  }
-
-  public async Task<UserDto> Register(CreateUserDto userDto)
+  public async Task<LogedUserInfoDto> Register(CreateUserDto userDto)
   {
     var checkDuplicatedUsername = await _userManager.Users.AnyAsync(u =>
       u.UserName == userDto.Username
@@ -104,7 +120,7 @@ public class AuthService : IAuthService
     throw new BadRequestException("Error saving user", new() { Errors = result.Errors.ToString() });
   }
 
-  public async Task<UserDto> Update(UpdateUserDto userDto)
+  public async Task<LogedUserInfoDto> Update(UpdateUserDto userDto)
   {
     var userName =
       _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to create.");
@@ -119,7 +135,7 @@ public class AuthService : IAuthService
       Bio = userDto.Bio ?? user.Bio,
     };
 
-    var result = await _userManager.UpdateAsync(user);
+    var result = await _userManager.UpdateAsync(userUpdated);
     if (result.Succeeded)
     {
       return this.ParseUserDto(user);
@@ -130,7 +146,7 @@ public class AuthService : IAuthService
     );
   }
 
-  public async Task<UserDto> UpdatePassword(string currentPassword, string newPassword)
+  public async Task<LogedUserInfoDto> UpdatePassword(string currentPassword, string newPassword)
   {
     var userName =
       _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to create.");
@@ -149,23 +165,12 @@ public class AuthService : IAuthService
     );
   }
 
-  public async Task<UserDto> GetCurrentUser(string email)
+  public async Task<LogedUserInfoDto> GetCurrentUser(string email)
   {
     var user =
       await _userManager.FindByEmailAsync(email ?? "")
       ?? throw new Exception("Auth User is not set!");
     return this.ParseUserDto(user);
-  }
-
-  private UserDto ParseUserDto(AppUser user)
-  {
-    return new UserDto
-    {
-      DisplayName = user?.DisplayName ?? "",
-      //Image= null,
-      Token = this.CreateToken(user),
-      Username = user.UserName ?? ""
-    };
   }
 
   public async Task AddRole(RoleDto roleDto)
@@ -190,5 +195,16 @@ public class AuthService : IAuthService
       ?? throw new NotFoundException("User does not exist for this e-mail!");
 
     await _userManager.RemoveFromRoleAsync(user, roleDto.UserRole);
+  }
+
+  public async Task<LogedUserInfoDto?> RefreshToken(string? userId)
+  {
+    if (userId == null)
+      return null;
+    var user =
+      await _userManager.FindByIdAsync(userId) ?? throw new NotFoundException("User is not logged");
+
+    var token = this.ParseUserDto(user);
+    return token;
   }
 }
