@@ -1,5 +1,7 @@
+using Apllication.Core;
 using Apllication.DTOs.Institute;
 using Apllication.DTOs.QLevel;
+using Application.Core.PagedList;
 using Application.DTOs.QLevel;
 using Domain.Entities;
 
@@ -7,12 +9,13 @@ namespace Apllication.Services.Interfaces;
 
 public interface IQLevelService
 {
-  public Task<QuestionLevel> Create(CreateQLevelDto dto);
-  public Task Delete(Guid id);
-  public Task<IEnumerable<QuestionLevel?>> GetAll();
+  Task<QuestionLevel> Create(CreateQLevelDto dto);
+  Task Delete(Guid id);
+  Task<IEnumerable<QuestionLevel?>> GetAll();
+  Task<PagedList<QuestionLevel?>> GetAllPaged(PagingParams pagingParams);
 
-  public Task<QuestionLevel?> GetById(Guid id);
+  Task<QuestionLevel?> GetById(Guid id);
 
-  public Task<int> GetCount();
-  public Task<QuestionLevel> Patch(Guid id, UpdateQLevelDto dto);
+  Task<int> GetCount();
+  Task<QuestionLevel> Patch(Guid id, UpdateQLevelDto dto);
 }

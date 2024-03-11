@@ -1,5 +1,7 @@
 using System;
+using Apllication.Core;
 using Apllication.Repositories.Interfaces;
+using Application.Core.PagedList;
 using Domain.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
@@ -53,6 +55,18 @@ public class GenericRepository<T> : IGenericRepository<T>
     IEnumerable<T?> entities = await _context.Set<T>().AsQueryable().ToListAsync();
 
     return entities;
+  }
+
+  public async Task<PagedList<T?>> GetAllPaged(PagingParams pagingParams)
+  {
+    IQueryable<T> entitiesQuery = _context.Set<T>().AsQueryable();
+    var pagedList = await PagedList<T>.CreateAsync(
+      entitiesQuery,
+      pagingParams.PageNumber,
+      pagingParams.PageSize
+    );
+
+    return pagedList;
   }
 
   public virtual async Task<T?> GetById(Guid id)

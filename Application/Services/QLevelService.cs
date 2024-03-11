@@ -1,7 +1,9 @@
+using Apllication.Core;
 using Apllication.DTOs.QLevel;
 using Apllication.Exceptions;
 using Apllication.Repositories.Interfaces;
 using Apllication.Services.Interfaces;
+using Application.Core.PagedList;
 using Application.DTOs.QLevel;
 using Application.Errors.Exceptions;
 using Domain.Entities;
@@ -23,6 +25,12 @@ public class QLevelService : IQLevelService
   public async Task<IEnumerable<QuestionLevel?>> GetAll()
   {
     var qlevels = await _qlevelRepository.GetAll();
+    return qlevels;
+  }
+
+  public async Task<PagedList<QuestionLevel?>> GetAllPaged(PagingParams pagingParams)
+  {
+    var qlevels = await _qlevelRepository.GetAllPaged(pagingParams);
     return qlevels;
   }
 

@@ -1,12 +1,17 @@
+using Apllication.Core;
+using Application.Core.PagedList;
+
 namespace Apllication.Repositories.Interfaces;
 
 public interface IGenericRepository<T>
   where T : class
 {
-  public Task<bool> SaveChanges();
-  public void Add(T entity);
-  public void Remove(T entity);
-  public Task<IEnumerable<T?>> GetAll();
+  Task<bool> SaveChanges();
+  void Add(T entity);
+  void Remove(T entity);
+  Task<IEnumerable<T?>> GetAll();
   Task<int?> Count();
-  public Task<T?> GetById(Guid id);
+  Task<T?> GetById(Guid id);
+
+  Task<PagedList<T?>> GetAllPaged(PagingParams pagingParams);
 }

@@ -188,7 +188,7 @@ public class QuestionServiceTest
       .Returns(Task.FromResult<Question?>(_question));
     A.CallTo(() => _questionRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
 
-    var result = await _questionService.PatchQuestion(questionId, updateQuestionDTO);
+    var result = await _questionService.Patch(questionId, updateQuestionDTO);
 
     result.Should().Be(_question);
   }
@@ -203,7 +203,7 @@ public class QuestionServiceTest
       .Returns(Task.FromResult<Question?>(null));
     try
     {
-      var result = await _questionService.PatchQuestion(quesitonId, updateQuestionDTO);
+      var result = await _questionService.Patch(quesitonId, updateQuestionDTO);
     }
     catch (Exception ex)
     {

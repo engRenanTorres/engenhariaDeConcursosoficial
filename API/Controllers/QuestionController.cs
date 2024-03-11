@@ -78,7 +78,7 @@ public class QuestionController : ControllerBase
   {
     _logger.LogInformation("PatchQuestions has been called.");
 
-    var updatedQuestion = await _questionService.PatchQuestion(id, updateQuestionDTO);
+    var updatedQuestion = await _questionService.Patch(id, updateQuestionDTO);
 
     return Ok(updatedQuestion);
   }

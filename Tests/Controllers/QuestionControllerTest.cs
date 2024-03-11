@@ -260,7 +260,7 @@ namespace DotnetAPITests.Controllers
       httpContext.User = userClaims;
       _questionController.ControllerContext.HttpContext = httpContext;
 
-      A.CallTo(() => _questionService.PatchQuestion(1, newUserData))
+      A.CallTo(() => _questionService.Patch(1, newUserData))
         .Returns(Task.FromResult<Question?>(_question));
 
       var result = await _questionController.PatchQuestion(1, newUserData);

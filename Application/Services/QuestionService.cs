@@ -138,7 +138,7 @@ public class QuestionService : IQuestionService
     throw new DatabaseException("Error while deleting question " + id);
   }
 
-  public async Task<Question> PatchQuestion(int id, UpdateQuestionDTO updateQuestionDTO)
+  public async Task<Question> Patch(int id, UpdateQuestionDTO updateQuestionDTO)
   {
     _logger.LogInformation("Patch QuestionService has been called.");
     Question question =

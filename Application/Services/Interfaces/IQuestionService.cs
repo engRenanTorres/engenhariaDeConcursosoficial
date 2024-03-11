@@ -18,5 +18,5 @@ public interface IQuestionService
 
   public Task<int> GetCount();
   public Task<int> GetLastId();
-  public Task<Question> PatchQuestion(int id, UpdateQuestionDTO updateQuestionDTO);
+  public Task<Question> Patch(int id, UpdateQuestionDTO updateQuestionDTO);
 }
