@@ -1,4 +1,5 @@
 using Apllication.Core;
+using Apllication.DTO;
 using Application.Core.PagedList;
 using Application.DTOs;
 using Domain.Entities.Questions;
@@ -7,7 +8,7 @@ namespace Apllication.Repositories.Interfaces;
 
 public interface IQuestionRepository
 {
-  public Task<PagedList<ViewQuestionDto?>> GetAllComplete(PagingParams pagingParams);
+  public Task<PagedList<ViewQuestionDto?>> GetAllComplete(QuestionParams pagingParams);
   public Task<int?> GetCount();
   public Task<ViewQuestionDto?> GetCompleteById(int id);
   public Task<int?> GetLastId();

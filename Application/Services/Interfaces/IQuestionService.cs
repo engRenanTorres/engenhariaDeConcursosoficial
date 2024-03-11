@@ -1,4 +1,5 @@
 using Apllication.Core;
+using Apllication.DTO;
 using Apllication.DTOs;
 using Apllication.Repositories;
 using Application.Core.PagedList;
@@ -11,7 +12,7 @@ public interface IQuestionService
 {
   public Task<Question> Create(CreateQuestionDTO questionDto);
   public Task Delete(int id);
-  public Task<PagedList<ViewQuestionDto?>> GetAllComplete(PagingParams pagingParams);
+  public Task<PagedList<ViewQuestionDto?>> GetAllComplete(QuestionParams pagingParams);
 
   public Task<ViewQuestionDto?> GetFullById(int id);
 

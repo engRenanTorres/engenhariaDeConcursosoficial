@@ -1,10 +1,8 @@
-/* eslint-disable import/no-cycle */
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { ChangeEvent, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { v4 as uuidv4 } from 'uuid';
-import Concurso from '../../interfaces/concursoInterface';
+import { CreateConcurso } from '../../interfaces/concursoInterface';
 import axiosClient from '../../utils/httpClient/axiosClient';
 import Subject from '../../interfaces/subjectInterface';
 import Level from '../../interfaces/levelInterface';
@@ -14,7 +12,7 @@ interface CreateProps {
   handleSubmit: (values: FormikCreateQuestionValues) => void;
 }
 
-const concursosDefault: Concurso[] = [
+const concursosDefault: CreateConcurso[] = [
   {
     id: 1,
     name: 'Erro na busca',
@@ -51,7 +49,8 @@ const levelsDefault: Level[] = [
 
 export default function QuestionsList({ handleSubmit }: CreateProps) {
   const [alternatives, setAlternatives] = useState<number>(2);
-  const [concursos, setConcursos] = useState<Concurso[]>(concursosDefault);
+  const [concursos, setConcursos] =
+    useState<CreateConcurso[]>(concursosDefault);
   const [subjects, setSubjects] = useState<Subject[]>(subjectsDefault);
   const [levels, setLevels] = useState<Level[]>(levelsDefault);
 

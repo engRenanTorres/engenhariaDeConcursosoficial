@@ -1,4 +1,5 @@
 using Apllication.Core;
+using Apllication.DTO;
 using Apllication.DTOs;
 using Apllication.Repositories.Interfaces;
 using Application.Core.PagedList;
@@ -20,11 +21,13 @@ public class QuestionRepository : IQuestionRepository
     _context = context;
   }
 
-  public async Task<PagedList<ViewQuestionDto?>> GetAllComplete(PagingParams pagingParams)
+  public async Task<PagedList<ViewQuestionDto?>> GetAllComplete(QuestionParams pagingParams)
   {
     if (_context.Questions != null)
     {
       var questionsQuery = BaseQuestionQuery().AsQueryable();
+      if (pagingParams.MinYear != null)
+        questionsQuery.Where(q => q.Concurso.Year >= pagingParams.MinYear);
       var pagedList = await PagedList<ViewQuestionDto>.CreateAsync(
         questionsQuery,
         pagingParams.PageNumber,

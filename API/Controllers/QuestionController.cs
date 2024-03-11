@@ -1,5 +1,6 @@
 using API.Extensions.HttpExtensions;
 using Apllication.Core;
+using Apllication.DTO;
 using Apllication.DTOs;
 using Apllication.Services.Interfaces;
 using Application.DTOs;
@@ -23,7 +24,7 @@ public class QuestionController : ControllerBase
 
   [HttpGet]
   [AllowAnonymous]
-  public async Task<ActionResult> GetAllFull([FromQuery] PagingParams pagingParams)
+  public async Task<ActionResult> GetAllFull([FromQuery] QuestionParams pagingParams)
   {
     var questions = await _questionService.GetAllComplete(pagingParams);
     Response.AddPaginationHeader(

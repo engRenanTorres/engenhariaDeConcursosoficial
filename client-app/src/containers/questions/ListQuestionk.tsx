@@ -4,7 +4,7 @@ import { Question } from '../../interfaces/questionInterface';
 import axiosClient from '../../utils/httpClient/axiosClient';
 
 const questionsDefault: Question[] = [
-  {
+  /* {
     body: 'Teria um erro no carregamento?',
     answer: 'A',
     tip: 'questao muito facil',
@@ -45,6 +45,7 @@ const questionsDefault: Question[] = [
     id: 1,
     createdAt: '2023-05-11',
   },
+  */
 ];
 function ListQuestionContent() {
   const { data, isLoading, error } = useQuery<Question[]>(
@@ -92,17 +93,17 @@ function ListQuestionContent() {
           <div className="flex flex-col justify-around items-around h-full">
             <div className="flex flex-col justify-around items-around">
               <p className="italic">banca:</p>
-              <p>{question.concurso.institute.name}</p>
+              <p>{question.instituteName}</p>
               <p className="italic">concurso:</p>
               <p>{question.concurso.name}</p>
               <p className="italic">ano:</p>
               <p>{question.concurso.year}</p>
               <p className="italic">nível:</p>
-              <p>{question.level.name}</p>
+              <p>{question.level}</p>
             </div>
             <p className="border-b w-fit border-black dark:border-neutral-200 text-xs">
-              Criada em <br /> <span>{question.createdAt} por </span>{' '}
-              {question.createdBy.name}
+              Criada em <br /> <span>{question.insertedAt} por </span>{' '}
+              {question.insertedBy.name}
             </p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 using Apllication.Core;
+using Apllication.DTO;
 using Apllication.DTOs;
 using Apllication.Exceptions;
 using Apllication.Interfaces;
@@ -40,7 +41,7 @@ public class QuestionService : IQuestionService
     _logger = logger;
   }
 
-  public async Task<PagedList<ViewQuestionDto?>> GetAllComplete(PagingParams pagingParams)
+  public async Task<PagedList<ViewQuestionDto?>> GetAllComplete(QuestionParams pagingParams)
   {
     var questions = await _questionRepository.GetAllComplete(pagingParams);
     return questions;
