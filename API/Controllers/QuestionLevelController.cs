@@ -15,10 +15,13 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class QuestionLevelController : ControllerBase
 {
-  private readonly ILogger<QuestionController> _logger;
+  private readonly ILogger<QuestionLevelController> _logger;
   private readonly IQLevelService _questionLevelService;
 
-  public QuestionLevelController(ILogger<QuestionController> logger, IQLevelService questionService)
+  public QuestionLevelController(
+    ILogger<QuestionLevelController> logger,
+    IQLevelService questionService
+  )
   {
     _logger = logger;
     _questionLevelService = questionService;
@@ -28,39 +31,39 @@ public class QuestionLevelController : ControllerBase
   [AllowAnonymous]
   public async Task<ActionResult> GetAll()
   {
-    var questions = await _questionLevelService.GetAll();
-    return Ok(questions);
+    var questionLevels = await _questionLevelService.GetAll();
+    return Ok(questionLevels);
   }
 
   [HttpGet]
   [AllowAnonymous]
   [Route("Paged")]
-  public async Task<ActionResult> GetAllFull([FromQuery] QuestionParams pagingParams)
+  public async Task<ActionResult> GetAllFull([FromQuery] PagingParams pagingParams)
   {
-    var questions = await _questionLevelService.GetAllPaged(pagingParams);
+    var questionLevels = await _questionLevelService.GetAllPaged(pagingParams);
     Response.AddPaginationHeader(
-      questions.CurrentPage,
-      questions.PageSize,
-      questions.TotalCount,
-      questions.TotalPages
+      questionLevels.CurrentPage,
+      questionLevels.PageSize,
+      questionLevels.TotalCount,
+      questionLevels.TotalPages
     );
-    return Ok(questions);
+    return Ok(questionLevels);
   }
 
   [HttpGet("{id}")]
   public async Task<ActionResult> GetFullById(Guid id)
   {
-    var questions = await _questionLevelService.GetById(id);
-    return Ok(questions);
+    var questionLevels = await _questionLevelService.GetById(id);
+    return Ok(questionLevels);
   }
 
   [Authorize(Roles = "Admin, Member")]
   [HttpPost]
   public async Task<ActionResult> Create(CreateQLevelDto dto)
   {
-    var question = await _questionLevelService.Create(dto);
+    var questionLevel = await _questionLevelService.Create(dto);
     var actionName = nameof(GetFullById);
-    return CreatedAtAction(actionName, new { Id = "LastIdCreated" }, question);
+    return CreatedAtAction(actionName, new { Id = "LastIdCreated" }, questionLevel);
   }
 
   [HttpDelete("{id}")]
@@ -74,12 +77,12 @@ public class QuestionLevelController : ControllerBase
   }
 
   [HttpPatch("{id}")]
-  public async Task<ActionResult> PatchQuestion([FromBody] UpdateQLevelDto dto)
+  public async Task<ActionResult> Patch([FromBody] UpdateQLevelDto dto)
   {
     _logger.LogInformation("Patch has been called.");
 
-    var updatedQuestion = await _questionLevelService.Patch(dto.Id, dto);
+    var updatedQuestionLevel = await _questionLevelService.Patch(dto.Id, dto);
 
-    return Ok(updatedQuestion);
+    return Ok(updatedQuestionLevel);
   }
 }

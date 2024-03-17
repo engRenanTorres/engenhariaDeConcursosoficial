@@ -43,11 +43,11 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 //builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
-builder.Services.AddScoped<IQLevelService, QLevelService>();
+builder.Services.AddScoped<Apllication.Services.Interfaces.IQLevelService, QLevelService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IInstituteService, InstituteService>();
 builder.Services.AddScoped<IConcursoService, ConcursoService>();
-builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IAreaService, Apllication.Services.AreaService>();
 
 //builder.Services.AddScoped<IAuthService, AuthService>();
 

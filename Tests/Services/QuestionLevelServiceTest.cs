@@ -12,8 +12,8 @@ namespace Tests;
 public class QuestionLevelServiceTest
 {
   private readonly IQuestionLevelRepository _questionLevelRepository;
-  private readonly ILogger<IQLevelService> _logger;
-  private readonly IQLevelService _questionLevelService;
+  private readonly ILogger<Apllication.Services.Interfaces.IQLevelService> _logger;
+  private readonly Apllication.Services.Interfaces.IQLevelService _questionLevelService;
   private readonly QuestionLevel _questionLevel =
     new()
     {
@@ -33,7 +33,7 @@ public class QuestionLevelServiceTest
       Name = _questionLevel.Name,
     };
     _questionLevelRepository = A.Fake<IQuestionLevelRepository>();
-    _logger = A.Fake<ILogger<IQLevelService>>();
+    _logger = A.Fake<ILogger<Apllication.Services.Interfaces.IQLevelService>>();
     _questionLevelService = new QLevelService(_questionLevelRepository, _logger);
   }
 
@@ -99,7 +99,7 @@ public class QuestionLevelServiceTest
   [Fact]
   public async Task Patch_updateSucessfully_ShouldReturnQuestion()
   {
-    var updateQuestionDTO = new UpdateQLevelDto();
+    var updateQuestionDTO = new UpdateQLevelDto() { Id = Guid.NewGuid() };
     var questionId = _questionLevel.Id;
 
     A.CallTo(() => _questionLevelRepository.GetById(questionId))
@@ -114,7 +114,7 @@ public class QuestionLevelServiceTest
   [Fact]
   public async Task Patch_NotFoundQuestionLevel_ShouldThrowNotFoundException()
   {
-    var updateQuestionDTO = new UpdateQLevelDto();
+    var updateQuestionDTO = new UpdateQLevelDto() { Id = Guid.NewGuid() };
     var quesitonId = _questionLevel.Id;
 
     A.CallTo(() => _questionLevelRepository.GetById(quesitonId))

@@ -19,7 +19,7 @@ public class QuestionService : IQuestionService
 {
   private readonly IQuestionRepository _questionRepository;
   private readonly ISubjectService _subjectService;
-  private readonly IQLevelService _qlevelService;
+  private readonly Interfaces.IQLevelService _qlevelService;
   private readonly IConcursoService _concursoService;
   private readonly IUserAccessor _userAccessor;
   private readonly ILogger<IQuestionService> _logger;
@@ -27,7 +27,7 @@ public class QuestionService : IQuestionService
   public QuestionService(
     IQuestionRepository questionRepository,
     ISubjectService subjectService,
-    IQLevelService qlevelService,
+    Interfaces.IQLevelService qlevelService,
     IConcursoService concursoService,
     IUserAccessor userAccessor,
     ILogger<IQuestionService> logger

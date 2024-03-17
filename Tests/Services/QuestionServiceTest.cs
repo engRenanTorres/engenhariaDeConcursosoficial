@@ -22,7 +22,7 @@ public class QuestionServiceTest
   private readonly IQuestionService _questionService;
   private readonly ISubjectService _subjectService;
   private readonly IConcursoService _concursoService;
-  private readonly IQLevelService _qLevelService;
+  private readonly Apllication.Services.Interfaces.IQLevelService _qLevelService;
   private readonly ChoicesQuestion _question;
   private readonly DateTime _createdAt = new(2020, 07, 02, 22, 59, 59);
   private readonly ViewQuestionDto _viewQuestionDto;
@@ -88,15 +88,15 @@ public class QuestionServiceTest
         InstituteName = _question.Concurso.Institute.Name,
         Year = _question.Concurso.Year,
       },
-      InsertedBy = new LogedUserInfoDto
+      InsertedBy = new UserDto
       {
         DisplayName = _question.InsertedBy.DisplayName,
-        Username = _question.InsertedBy.UserName,
+        Id = _question.InsertedBy.Id,
       }
     };
     _questionRepository = A.Fake<IQuestionRepository>();
     _subjectService = A.Fake<ISubjectService>();
-    _qLevelService = A.Fake<IQLevelService>();
+    _qLevelService = A.Fake<Apllication.Services.Interfaces.IQLevelService>();
     _concursoService = A.Fake<IConcursoService>();
     _userAccessor = A.Fake<IUserAccessor>();
     _logger = A.Fake<ILogger<IQuestionService>>();
@@ -127,7 +127,7 @@ public class QuestionServiceTest
   public async Task GetAllQuestion_BDContainTheQuestion_ShouldReturnPagedListQuestions()
   {
     var questions = new List<ViewQuestionDto> { _viewQuestionDto };
-    var pagingParams = new PagingParams { PageNumber = 1, PageSize = 1 };
+    var pagingParams = new Apllication.DTO.QuestionParams { PageNumber = 1, PageSize = 1 };
     var countQuestions = questions.Count;
     var pagedList = new PagedList<ViewQuestionDto>(
       questions,

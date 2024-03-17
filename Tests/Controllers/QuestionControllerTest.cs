@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using API.Controllers;
 using Apllication.Core;
+using Apllication.DTO;
 using Apllication.DTOs;
 using Apllication.Exceptions;
 using Apllication.Services.Interfaces;
@@ -77,10 +78,10 @@ namespace DotnetAPITests.Controllers
         Body = _question.Body,
         Answer = _question.Answer,
         Tip = _question.Tip,
-        InsertedBy = new LogedUserInfoDto
+        InsertedBy = new UserDto
         {
           DisplayName = _question.InsertedBy.DisplayName,
-          Username = _question.InsertedBy.UserName,
+          Id = _question.InsertedBy.Id,
         },
         Subject = _subject.Name,
         Concurso = new()
@@ -227,7 +228,7 @@ namespace DotnetAPITests.Controllers
     public async Task GetQuestions_ReturnPagedListOfQuesitons()
     {
       var questions = new List<ViewQuestionDto> { _viewQuestionDto };
-      var pagingParams = new PagingParams { PageNumber = 1, PageSize = 1 };
+      var pagingParams = new QuestionParams { PageNumber = 1, PageSize = 1 };
       var countQuestions = questions.Count;
       var pagedList = new PagedList<ViewQuestionDto>(
         questions,

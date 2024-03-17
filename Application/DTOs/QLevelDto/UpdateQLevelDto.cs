@@ -1,10 +1,12 @@
+using System.ComponentModel.DataAnnotations;
 using Domain.Entities;
 
 namespace Application.DTOs.QLevel;
 
 public class UpdateQLevelDto
 {
-  public required Guid Id { get; set; }
+  [Required]
+  public Guid Id { get; set; }
   public string? Name { get; set; }
   public string? About { get; set; }
 }

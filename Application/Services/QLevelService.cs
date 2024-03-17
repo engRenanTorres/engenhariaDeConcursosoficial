@@ -11,12 +11,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Apllication.Services;
 
-public class QLevelService : IQLevelService
+public class QLevelService : Interfaces.IQLevelService
 {
   private readonly IQuestionLevelRepository _qlevelRepository;
-  private readonly ILogger<IQLevelService> _logger;
+  private readonly ILogger<Interfaces.IQLevelService> _logger;
 
-  public QLevelService(IQuestionLevelRepository subjectRepository, ILogger<IQLevelService> logger)
+  public QLevelService(
+    IQuestionLevelRepository subjectRepository,
+    ILogger<Interfaces.IQLevelService> logger
+  )
   {
     _qlevelRepository = subjectRepository;
     _logger = logger;

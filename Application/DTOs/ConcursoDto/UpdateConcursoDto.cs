@@ -5,6 +5,8 @@ namespace Application.DTOs.Concurso;
 
 public class UpdateConcursoDto
 {
+  [Required]
+  public Guid Id { get; set; }
   public string? Name { get; set; }
   public string? About { get; set; }
 
