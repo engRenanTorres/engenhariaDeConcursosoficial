@@ -39,7 +39,7 @@ export function AuthProvider({ children }: Props): ReactElement<Props> {
       setLoading(true);
       return await authService
         .login({ email, password })
-        .then(async (response) => {
+        .then(async () => {
           // console.log('response', response);
           try {
             const user = await authService.getSession();

@@ -60,7 +60,7 @@ export default function Sidebar() {
             handleCollapse();
           }}
         >
-          {currentUser ? rolesStrings[currentUser.roles - 1] : 'Visitante'}
+          {currentUser ? rolesStrings[currentUser.roleName - 1] : 'Visitante'}
           <XMarkIcon className={icons} />
         </button>
       )}
@@ -100,7 +100,7 @@ export default function Sidebar() {
           selected={selected}
           setSelected={setSelected}
         />
-        {currentUser && workerRoles.includes(currentUser.roles) && (
+        {currentUser && workerRoles.includes(currentUser.roleName) && (
           <>
             <MItem
               to="/questions/create"

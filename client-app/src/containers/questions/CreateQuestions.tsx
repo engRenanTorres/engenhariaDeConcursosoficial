@@ -87,17 +87,17 @@ export default function QuestionsList({ handleSubmit }: CreateProps) {
   };
 
   const handleConcursos = async () => {
-    const { data } = await axiosClient.get('/concurso');
+    const { data } = await axiosClient.get('/Concurso');
     setConcursos(data);
   };
 
   const handleSubjects = async () => {
-    const { data } = await axiosClient.get('/subject');
+    const { data } = await axiosClient.get('/Subject');
     setSubjects(data);
   };
 
   const handleLevels = async () => {
-    const { data } = await axiosClient.get('/level');
+    const { data } = await axiosClient.get('/QuestionLevel');
     setLevels(data);
   };
 

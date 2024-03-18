@@ -38,16 +38,17 @@ public class AuthService : IAuthService
     var user = await _userManager.FindByEmailAsync(loginDTO.Email);
     if (user == null)
       return null; //Unauthorized();
+    var role = await _userManager.GetRolesAsync(user);
 
     var autorizeResult = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
     if (autorizeResult)
     {
-      return ParseUserDto(user);
+      return ParseUserDto(user, role);
     }
     return null; // Unauthorized();
   }
 
-  private LogedUserInfoDto ParseUserDto(AppUser user)
+  private LogedUserInfoDto ParseUserDto(AppUser user, IList<string> role)
   {
     return new LogedUserInfoDto
     {
@@ -57,7 +58,7 @@ public class AuthService : IAuthService
         DisplayName = user?.DisplayName ?? "",
         Token = this.CreateToken(user),
         Id = user.Id,
-        RoleName = user.Role.ToString()
+        RoleName = role[0].ToString()
         //Image= null,
       }
     };
@@ -115,7 +116,7 @@ public class AuthService : IAuthService
       if (await _roleManager.FindByNameAsync("User") == null)
         throw new Exception("Default user are not set");
       await _userManager.AddToRoleAsync(user, "User");
-      return this.ParseUserDto(user);
+      return this.ParseUserDto(user, new List<string>() { "User" });
     }
     throw new BadRequestException("Error saving user", new() { Errors = result.Errors.ToString() });
   }
@@ -127,6 +128,7 @@ public class AuthService : IAuthService
     var user =
       await _userManager.FindByNameAsync(userName)
       ?? throw new BadRequestException("You must be loged to create.");
+    var role = await _userManager.GetRolesAsync(user);
     var userUpdated = new AppUser
     {
       DisplayName = userDto.DisplayName ?? user.DisplayName,
@@ -138,7 +140,7 @@ public class AuthService : IAuthService
     var result = await _userManager.UpdateAsync(userUpdated);
     if (result.Succeeded)
     {
-      return this.ParseUserDto(user);
+      return this.ParseUserDto(user, role);
     }
     throw new BadRequestException(
       "Error updating user",
@@ -153,11 +155,12 @@ public class AuthService : IAuthService
     var user =
       await _userManager.FindByNameAsync(userName)
       ?? throw new BadRequestException("You must be loged to create.");
+    var role = await _userManager.GetRolesAsync(user);
 
     var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
     if (result.Succeeded)
     {
-      return this.ParseUserDto(user);
+      return this.ParseUserDto(user, role);
     }
     throw new BadRequestException(
       "Error updating user",
@@ -170,7 +173,8 @@ public class AuthService : IAuthService
     var user =
       await _userManager.FindByEmailAsync(email ?? "")
       ?? throw new Exception("Auth User is not set!");
-    return this.ParseUserDto(user);
+    var role = await _userManager.GetRolesAsync(user);
+    return this.ParseUserDto(user, role);
   }
 
   public async Task AddRole(RoleDto roleDto)
@@ -203,8 +207,9 @@ public class AuthService : IAuthService
       return null;
     var user =
       await _userManager.FindByIdAsync(userId) ?? throw new NotFoundException("User is not logged");
+    var role = await _userManager.GetRolesAsync(user);
 
-    var token = this.ParseUserDto(user);
+    var token = this.ParseUserDto(user, role);
     return token;
   }
 }

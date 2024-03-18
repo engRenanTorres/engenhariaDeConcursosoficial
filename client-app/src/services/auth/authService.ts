@@ -6,7 +6,7 @@ export type Credencials = {
   id: string;
   name: string;
   email: string;
-  roles: number;
+  roleName: string;
   token: string;
 };
 

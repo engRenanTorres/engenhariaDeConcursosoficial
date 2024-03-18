@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Domain.Entities.Interfaces;
 using Domain.Entities.Questions;
 
@@ -16,5 +17,7 @@ public class StudyArea : IEntity
   public string Name { get; set; } = "";
 
   public string About { get; set; } = "";
+
+  [JsonIgnore]
   public IEnumerable<Subject> Subjects { get; set; } = new List<Subject>();
 }

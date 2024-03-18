@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SignupPage } from './pages/SignupPage';
@@ -20,12 +15,12 @@ export default function AppRouter() {
     <Router>
       <AuthProvider>
         <Routes>
-          <Route element={<PrivateRoutes role={[1, 2, 3]} />}>
+          <Route element={<PrivateRoutes role={['Admin', 'Staff']} />}>
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="create-questions" element={<CreateQuestions />} />
           </Route>
           <Route path="questions">
-            <Route element={<PrivateRoutes role={[1, 2, 3]} />}>
+            <Route element={<PrivateRoutes role={['Adm', 'Staff']} />}>
               <Route path="create" element={<CreateQuestions />} />
             </Route>
             <Route index element={<ListQuestions />} />

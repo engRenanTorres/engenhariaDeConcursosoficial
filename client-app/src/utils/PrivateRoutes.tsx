@@ -3,7 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import useAuth from './hooks/useAuth';
 
 type Props = {
-  role: number[];
+  role: string[];
 };
 
 const PrivateRoutes: React.FC<Props> = ({ role }: Props) => {
@@ -11,8 +11,9 @@ const PrivateRoutes: React.FC<Props> = ({ role }: Props) => {
   const location = useLocation();
 
   const checkAuth = () => {
-    if (!currentUser || !role.includes(currentUser.roles))
+    if (!currentUser || !role.includes(currentUser.roleName)) {
       return <Navigate to="/login" state={{ from: location }} />;
+    }
     return <Outlet />;
   };
   // console.log(currentUser);
