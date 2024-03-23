@@ -30,3 +30,6 @@ To do...
 ![image](https://github.com/engRenanTorres/engconcfullstack/assets/85042807/d5eaa463-74df-4ec4-afc4-847a6bb94051)
 
 ## Diagrama de classes
+
+![classDiagramEngConc drawio](https://github.com/engRenanTorres/engenhariaDeConcursosoficialDDD/assets/85042807/4d00e6b5-2375-4b4a-8267-d087de6f5def)
+
