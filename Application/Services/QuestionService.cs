@@ -116,8 +116,7 @@ public class QuestionService : IQuestionService
       };
     }
 
-    _questionRepository.Add(question, creatorName);
-    if (await _questionRepository.SaveChanges())
+    if (await _questionRepository.Add(question, creatorName))
     {
       return question;
     }
@@ -132,8 +131,7 @@ public class QuestionService : IQuestionService
       await _questionRepository.GetById(id)
       ?? throw new NotFoundException("Question id: " + id + " not found");
 
-    _questionRepository.Remove(question);
-    if (await _questionRepository.SaveChanges())
+    if (await _questionRepository.Remove(question))
       return;
     throw new DatabaseException("Error while deleting question " + id);
   }
@@ -167,9 +165,8 @@ public class QuestionService : IQuestionService
 
     var editorName =
       _userAccessor.GetUsername() ?? throw new BadRequestException("You must be loged to edit.");
-    _questionRepository.Edit(question, editorName);
 
-    if (await _questionRepository.SaveChanges())
+    if (await _questionRepository.Edit(question, editorName))
     {
       _logger.LogInformation("Patch QuestionService has updated question successfully.");
       return question;

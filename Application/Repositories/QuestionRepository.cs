@@ -123,32 +123,45 @@ public class QuestionRepository : IQuestionRepository
     throw new Exception("Questions repo is not set");
   }
 
-  public async void Add(Question question, string creatorName)
+  public async Task<bool> Add(Question question, string creatorName)
   {
-    var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == creatorName);
-    question.InsertedBy = user;
-    if (question != null)
+    try
     {
-      _context.Questions.Add(question);
+      var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == creatorName);
+      question.InsertedBy = user;
+      if (question != null)
+      {
+        _context.Questions.Add(question);
+        return await this.SaveChanges();
+      }
+      return false;
+    }
+    catch (Exception e)
+    {
+      throw new Exception(e.Message);
     }
   }
 
-  public async void Edit(Question question, string editorName)
+  public async Task<bool> Edit(Question question, string editorName)
   {
     var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == editorName);
     question.EditedBy = user;
     if (question != null)
     {
       _context.Entry(question).State = EntityState.Modified;
+      return await this.SaveChanges();
     }
+    return false;
   }
 
-  public void Remove(Question entity)
+  public async Task<bool> Remove(Question entity)
   {
     if (entity != null)
     {
       _context.Questions.Remove(entity);
+      return await this.SaveChanges();
     }
+    return false;
   }
 
   public async Task<Question?> GetById(int id)

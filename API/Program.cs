@@ -78,7 +78,7 @@ else
 
 //app.UseHttpsRedirection();
 
-app.UseExceptionHandler("/Error"); //TODO fix exceptionhandler
+app.UseExceptionHandler("/Error"); // TODO: fix exceptionhandler
 
 app.UseAuthentication();
 app.UseAuthorization();

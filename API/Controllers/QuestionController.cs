@@ -4,8 +4,11 @@ using Apllication.DTO;
 using Apllication.DTOs;
 using Apllication.Services.Interfaces;
 using Application.DTOs;
+using Domain.Entities;
+using Domain.Entities.Questions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers;
 
@@ -37,6 +40,7 @@ public class QuestionController : ControllerBase
   }
 
   [HttpGet("{id}")]
+  [AllowAnonymous]
   public async Task<ActionResult> GetFullById(int id)
   {
     var questions = await _questionService.GetFullById(id);
@@ -44,6 +48,7 @@ public class QuestionController : ControllerBase
   }
 
   [HttpGet("LastId")]
+  [AllowAnonymous]
   public async Task<ActionResult> GetCount()
   {
     int id = await _questionService.GetCount();
@@ -57,9 +62,26 @@ public class QuestionController : ControllerBase
     var question = await _questionService.Create(questionDto);
     var actionName = nameof(GetFullById);
     var LastIdCreated = await _questionService.GetLastId();
-    return CreatedAtAction(actionName, new { Id = LastIdCreated }, question);
+    var jsonQuestion = new ViewQuestionDto()
+    {
+      Id = LastIdCreated,
+      Answer = (question as ChoicesQuestion)?.Answer ?? char.Parse(""),
+      Body = question.Body,
+      EditedBy = new() { DisplayName = question.EditedBy?.DisplayName ?? "", },
+      InsertedAt = question.InsertedAt,
+      InsertedBy = new() { DisplayName = question.InsertedBy?.DisplayName ?? "" },
+      LastUpdatedAt = question.LastUpdatedAt,
+      Tip = question.Tip,
+      Choices = (question as ChoicesQuestion)?.Choices ?? new List<Choice>(),
+      Concurso = new() { Name = question.Concurso?.Name ?? "", },
+      Subject = question.Subject?.Name ?? "",
+      StudyArea = question.Subject?.StudyArea?.Name ?? "",
+      Level = question.QuestionLevel?.Name ?? ""
+    };
+    return CreatedAtAction(actionName, new { Id = LastIdCreated }, jsonQuestion);
   }
 
+  [Authorize(Roles = "Admin")]
   [HttpDelete("{id}")]
   public async Task<ActionResult> DeleteQuestion(int id)
   {
@@ -70,6 +92,7 @@ public class QuestionController : ControllerBase
     return NoContent();
   }
 
+  [Authorize(Roles = "Admin")]
   [HttpPatch("{id}")]
   public async Task<ActionResult> PatchQuestion(
     int id,
