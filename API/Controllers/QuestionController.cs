@@ -50,7 +50,7 @@ public class QuestionController : ControllerBase
     return Ok(id);
   }
 
-  [Authorize(Roles = "Admin, Member")]
+  [Authorize(Roles = "Admin")]
   [HttpPost]
   public async Task<ActionResult> Create(CreateQuestionDTO questionDto)
   {

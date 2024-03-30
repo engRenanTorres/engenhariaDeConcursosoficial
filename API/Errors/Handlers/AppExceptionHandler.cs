@@ -14,9 +14,10 @@ public class AppExceptionHandler : IExceptionHandler
     if (exception is Application.Exceptions.WebException)
     {
       var ex = exception as Application.Exceptions.WebException;
+      var statusCode = ex?.ErrorDetails?.HttpStatus ?? HttpStatusCode.InternalServerError;
       var response = new ErrorResponse()
       {
-        StatusCode = (int)((ex?.ErrorDetails?.HttpStatus ?? HttpStatusCode.InternalServerError)),
+        StatusCode = (int)statusCode,
         Title = ex?.ErrorDetails?.Code ?? "WebException Error",
         ExceptionMessage = ex?.Message,
         StackTrace = exception?.StackTrace?.ToString()

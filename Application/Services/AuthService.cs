@@ -56,7 +56,7 @@ public class AuthService : IAuthService
       Credentials =
       {
         DisplayName = user?.DisplayName ?? "",
-        Token = this.CreateToken(user),
+        Token = this.CreateToken(user, role),
         Id = user.Id,
         RoleName = role[0].ToString()
         //Image= null,
@@ -64,13 +64,13 @@ public class AuthService : IAuthService
     };
   }
 
-  public string CreateToken(AppUser user)
+  public string CreateToken(AppUser user, IList<string> role)
   {
     var claims = new List<Claim>
     {
       new Claim(ClaimTypes.Name, user.UserName ?? ""),
       new Claim(ClaimTypes.NameIdentifier, user.Id),
-      new Claim(ClaimTypes.Role, user.Role.ToString()),
+      new Claim(ClaimTypes.Role, role[0].ToString() ?? ""),
     };
 
     var key = new SymmetricSecurityKey(

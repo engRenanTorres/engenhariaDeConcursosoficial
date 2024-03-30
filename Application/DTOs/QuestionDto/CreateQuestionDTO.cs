@@ -15,6 +15,7 @@ public class CreateQuestionDTO
     ErrorMessage = "Answer field accepts only the values A, B, C, D, or E."
   )]
   public string? Answer { get; set; }
+  public string? Tip { get; set; }
 
   [Required]
   public required Guid SubjectId { get; set; }
@@ -25,6 +26,5 @@ public class CreateQuestionDTO
   [Required]
   public required Guid LevelId { get; set; }
 
-  public string? Tip { get; set; }
   public ICollection<ChoiceDto>? Choices { get; set; }
 }

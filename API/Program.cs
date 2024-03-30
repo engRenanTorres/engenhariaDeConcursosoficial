@@ -1,4 +1,5 @@
 using API.Errors;
+using API.Errors.Handler;
 using API.Extensions;
 using Apllication.Core;
 using Apllication.Data.Repositories;
@@ -76,7 +77,8 @@ else
 );*/
 
 //app.UseHttpsRedirection();
-app.UseExceptionHandler(_ => { });
+
+app.UseExceptionHandler("/Error"); //TODO fix exceptionhandler
 
 app.UseAuthentication();
 app.UseAuthorization();
