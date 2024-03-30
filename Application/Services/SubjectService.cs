@@ -66,8 +66,7 @@ public class SubjectService : ISubjectService
         CreatedAt = DateTime.Now
       };
 
-    _subjectRepository.Add(subject);
-    if (await _subjectRepository.SaveChanges())
+    if (await _subjectRepository.Add(subject))
     {
       return subject;
     }
@@ -82,8 +81,7 @@ public class SubjectService : ISubjectService
       await _subjectRepository.GetById(id)
       ?? throw new NotFoundException("Subject id: " + id + " not found");
 
-    _subjectRepository.Remove(subject);
-    if (await _subjectRepository.SaveChanges())
+    if (await _subjectRepository.Remove(subject))
       return;
     throw new DatabaseException("Error while deleting subject " + id);
   }
@@ -107,7 +105,7 @@ public class SubjectService : ISubjectService
       subject.StudyArea = studyArea;
     }
 
-    if (await _subjectRepository.SaveChanges())
+    if (await _subjectRepository.Edit(subject))
     {
       _logger.LogInformation("Patch SubjectService has updated question successfully.");
       return subject;

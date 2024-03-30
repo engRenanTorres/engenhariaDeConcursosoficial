@@ -60,8 +60,7 @@ public class ConcursoService : IConcursoService
         Institute = institute
       };
 
-    _concursoRepository.Add(concurso);
-    if (await _concursoRepository.SaveChanges())
+    if (await _concursoRepository.Add(concurso))
     {
       return concurso;
     }
@@ -76,8 +75,7 @@ public class ConcursoService : IConcursoService
       await _concursoRepository.GetById(id)
       ?? throw new NotFoundException("Concurso id: " + id + " not found");
 
-    _concursoRepository.Remove(concurso);
-    if (await _concursoRepository.SaveChanges())
+    if (await _concursoRepository.Remove(concurso))
       return;
     throw new DatabaseException("Error while deleting concurso " + id);
   }
@@ -96,7 +94,7 @@ public class ConcursoService : IConcursoService
     if (updateDTO.Year.HasValue)
       concurso.Year = updateDTO.Year.GetValueOrDefault();
 
-    if (await _concursoRepository.SaveChanges())
+    if (await _concursoRepository.Edit(concurso))
     {
       _logger.LogInformation("Patch ConcursoService has updated question successfully.");
       return concurso;

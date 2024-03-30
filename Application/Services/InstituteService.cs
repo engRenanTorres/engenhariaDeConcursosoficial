@@ -52,8 +52,7 @@ public class InstituteService : IInstituteService
         CreatedAt = DateTime.Now
       };
 
-    _instituteRepository.Add(institute);
-    if (await _instituteRepository.SaveChanges())
+    if (await _instituteRepository.Add(institute))
     {
       return institute;
     }
@@ -68,8 +67,7 @@ public class InstituteService : IInstituteService
       await _instituteRepository.GetById(id)
       ?? throw new NotFoundException("Institute id: " + id + " not found");
 
-    _instituteRepository.Remove(institute);
-    if (await _instituteRepository.SaveChanges())
+    if (await _instituteRepository.Remove(institute))
       return;
     throw new DatabaseException("Error while deleting institute " + id);
   }
@@ -88,7 +86,7 @@ public class InstituteService : IInstituteService
     if (updateDTO.Contact != null)
       institute.Contact = updateDTO.Contact;
 
-    if (await _instituteRepository.SaveChanges())
+    if (await _instituteRepository.Edit(institute))
     {
       _logger.LogInformation("Patch has updated institute successfully.");
       return institute;

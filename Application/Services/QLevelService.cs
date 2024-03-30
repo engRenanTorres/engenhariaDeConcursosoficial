@@ -59,8 +59,7 @@ public class QLevelService : Interfaces.IQLevelService
         CreatedAt = DateTime.Now
       };
 
-    _qlevelRepository.Add(qlevel);
-    if (await _qlevelRepository.SaveChanges())
+    if (await _qlevelRepository.Add(qlevel))
     {
       return qlevel;
     }
@@ -75,8 +74,7 @@ public class QLevelService : Interfaces.IQLevelService
       await _qlevelRepository.GetById(id)
       ?? throw new NotFoundException("QLevel id: " + id + " not found");
 
-    _qlevelRepository.Remove(qlevel);
-    if (await _qlevelRepository.SaveChanges())
+    if (await _qlevelRepository.Remove(qlevel))
       return;
     throw new DatabaseException("Error while deleting qlevel " + id);
   }
@@ -84,19 +82,19 @@ public class QLevelService : Interfaces.IQLevelService
   public async Task<QuestionLevel> Patch(Guid id, UpdateQLevelDto updateDTO)
   {
     _logger.LogInformation("Patch QLevelService has been called.");
-    QuestionLevel area =
+    QuestionLevel qlevel =
       await _qlevelRepository.GetById(id)
       ?? throw new NotFoundException("QLevel id: " + id + " not found");
 
     if (updateDTO.Name != null)
-      area.Name = updateDTO.Name;
+      qlevel.Name = updateDTO.Name;
     if (updateDTO.About != null)
-      area.About = updateDTO.About;
+      qlevel.About = updateDTO.About;
 
-    if (await _qlevelRepository.SaveChanges())
+    if (await _qlevelRepository.Edit(qlevel))
     {
       _logger.LogInformation("Patch QLevelService has updated question successfully.");
-      return area;
+      return qlevel;
     }
     throw new DatabaseException("Error to update QLevel");
   }

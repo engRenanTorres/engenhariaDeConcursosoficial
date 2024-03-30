@@ -48,8 +48,7 @@ public class AreaService : IAreaService
         CreatedAt = DateTime.Now
       };
 
-    _areaRepository.Add(area);
-    if (await _areaRepository.SaveChanges())
+    if (await _areaRepository.Add(area))
     {
       return area;
     }
@@ -64,8 +63,7 @@ public class AreaService : IAreaService
       await _areaRepository.GetById(id)
       ?? throw new NotFoundException("Area id: " + id + " not found");
 
-    _areaRepository.Remove(area);
-    if (await _areaRepository.SaveChanges())
+    if (await _areaRepository.Remove(area))
       return;
     throw new DatabaseException("Error while deleting area " + id);
   }
@@ -82,7 +80,7 @@ public class AreaService : IAreaService
     if (updateDTO.About != null)
       area.About = updateDTO.About;
 
-    if (await _areaRepository.SaveChanges())
+    if (await _areaRepository.Edit(area))
     {
       _logger.LogInformation("Patch AreaService has updated question successfully.");
       return area;

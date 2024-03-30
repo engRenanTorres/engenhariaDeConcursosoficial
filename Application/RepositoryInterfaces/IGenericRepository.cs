@@ -6,9 +6,9 @@ namespace Apllication.Repositories.Interfaces;
 public interface IGenericRepository<T>
   where T : class
 {
-  Task<bool> SaveChanges();
-  void Add(T entity);
-  void Remove(T entity);
+  Task<bool> Add(T entity);
+  Task<bool> Edit(T entity);
+  Task<bool> Remove(T entity);
   Task<IEnumerable<T?>> GetAll();
   Task<int?> Count();
   Task<T?> GetById(Guid id);

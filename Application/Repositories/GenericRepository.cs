@@ -20,34 +20,40 @@ public class GenericRepository<T> : IGenericRepository<T>
     _context = context;
   }
 
-  public async Task<bool> SaveChanges()
+  private async Task<bool> SaveChanges()
   {
     return await _context.SaveChangesAsync() > 0;
   }
 
-  public void Add(T entity)
+  public async Task<bool> Add(T entity)
   {
     if (entity != null)
     {
       entity.CreatedAt = DateTime.UtcNow;
       _context.Set<T>().Add(entity);
+      return await this.SaveChanges();
     }
+    return false;
   }
 
-  public void Remove(T entity)
+  public async Task<bool> Remove(T entity)
   {
     if (entity != null)
     {
       _context.Set<T>().Remove(entity);
+      return await this.SaveChanges();
     }
+    return false;
   }
 
-  public void Edit(T entity)
+  public async Task<bool> Edit(T entity)
   {
     if (entity != null)
     {
       _context.Entry(entity).State = EntityState.Modified;
+      return await this.SaveChanges();
     }
+    return false;
   }
 
   public async Task<IEnumerable<T?>> GetAll()
