@@ -69,8 +69,8 @@ public class QuestionLevelServiceTest
 
     A.CallTo(() => _questionLevelRepository.GetById(questionId))
       .Returns(Task.FromResult<QuestionLevel?>(_questionLevel));
-    A.CallTo(() => _questionLevelRepository.Remove(_questionLevel));
-    A.CallTo(() => _questionLevelRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _questionLevelRepository.Remove(_questionLevel))
+      .Returns(Task.FromResult<bool>(true));
 
     Func<Task> act = async () => await _questionLevelService.Delete(questionId);
 
@@ -104,7 +104,8 @@ public class QuestionLevelServiceTest
 
     A.CallTo(() => _questionLevelRepository.GetById(questionId))
       .Returns(Task.FromResult<QuestionLevel?>(_questionLevel));
-    A.CallTo(() => _questionLevelRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _questionLevelRepository.Edit(_questionLevel))
+      .Returns(Task.FromResult<bool>(true));
 
     var result = await _questionLevelService.Patch(questionId, updateQuestionDTO);
 
@@ -130,26 +131,12 @@ public class QuestionLevelServiceTest
   }
 
   [Fact]
-  public async Task Create_ShouldReturnMultipleChoiceQuestion_WhenCreateQuestionWithChoices()
+  public async Task Create_ShouldReturnQuestion_WhenCreateQuestion()
   {
     var questionDTO = new CreateQLevelDto() { Name = "Superior", };
 
-    A.CallTo(() => _questionLevelRepository.Add(_questionLevel));
-    A.CallTo(() => _questionLevelRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
-
-    var result = await _questionLevelService.Create(questionDTO);
-
-    result?.Name.Should().Be(_questionLevel.Name);
-    result.Should().BeOfType<QuestionLevel>();
-  }
-
-  [Fact]
-  public async Task Create_ShouldReturnBooleanQuestionLevel_WhenCreateQuestionLevelWithoutChoices()
-  {
-    var questionDTO = new CreateQLevelDto() { Name = "Superior", };
-
-    A.CallTo(() => _questionLevelRepository.Add(_questionLevel));
-    A.CallTo(() => _questionLevelRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _questionLevelRepository.Add(_questionLevel))
+      .Returns(Task.FromResult<bool>(true));
 
     var result = await _questionLevelService.Create(questionDTO);
 

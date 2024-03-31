@@ -35,7 +35,13 @@ namespace DotnetAPITests.Controllers
 
     public InstituteControllerTest()
     {
-      _viewInstituteDto = new() { Name = _institute.Name };
+      _viewInstituteDto = new()
+      {
+        Id = _institute.Id,
+        Name = _institute.Name,
+        CreatedAt = _institute.CreatedAt,
+        About = _institute.About
+      };
       _instituteService = A.Fake<IInstituteService>();
       _logger = A.Fake<ILogger<InstituteController>>();
       _instituteController = new InstituteController(_logger, _instituteService);

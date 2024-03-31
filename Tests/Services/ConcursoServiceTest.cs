@@ -13,7 +13,7 @@ public class ConcursoServiceTest
 {
   private readonly IConcursoRepository _concursoRepository;
   private readonly ILogger<IConcursoService> _logger;
-  private readonly IConcursoService _areaService;
+  private readonly IConcursoService _concursoService;
   private readonly IInstituteService _instituteService;
   private Concurso _concurso;
 
@@ -36,8 +36,8 @@ public class ConcursoServiceTest
     };
     _concursoRepository = A.Fake<IConcursoRepository>();
     _logger = A.Fake<ILogger<IConcursoService>>();
-    _instituteService = A.Fake<InstituteService>();
-    _areaService = new ConcursoService(_concursoRepository, _instituteService, _logger);
+    _instituteService = A.Fake<IInstituteService>();
+    _concursoService = new ConcursoService(_concursoRepository, _instituteService, _logger);
   }
 
   [Fact]
@@ -46,7 +46,7 @@ public class ConcursoServiceTest
     var id = _concurso.Id;
     A.CallTo(() => _concursoRepository.GetById(id)).Returns(Task.FromResult(_concurso));
 
-    var result = await _areaService.GetById(id);
+    var result = await _concursoService.GetById(id);
 
     result?.Should().BeOfType<Concurso>();
     result?.Should().BeSameAs(_concurso);
@@ -55,27 +55,26 @@ public class ConcursoServiceTest
   [Fact]
   public async Task GetAllConcurso_BDContainTheConcurso_ShouldReturnConcursos()
   {
-    var areas = new List<Concurso> { _concurso };
-    A.CallTo(() => _concursoRepository.GetAll()).Returns(areas);
+    var concursos = new List<Concurso> { _concurso };
+    A.CallTo(() => _concursoRepository.GetAll()).Returns(concursos);
 
-    var result = await _areaService.GetAll();
+    var result = await _concursoService.GetAll();
 
     result?.Should().BeOfType<List<Concurso>>();
 
-    result?.Should().BeSameAs(areas);
+    result?.Should().BeSameAs(concursos);
   }
 
   [Fact]
   public async Task DeleteConcurso_BDContainTheConcurso_ShouldNotThrow()
   {
-    var areaId = _concurso.Id;
+    var concursoId = _concurso.Id;
 
-    A.CallTo(() => _concursoRepository.GetById(areaId))
+    A.CallTo(() => _concursoRepository.GetById(concursoId))
       .Returns(Task.FromResult<Concurso?>(_concurso));
-    A.CallTo(() => _concursoRepository.Remove(_concurso));
-    A.CallTo(() => _concursoRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _concursoRepository.Remove(_concurso)).Returns(Task.FromResult<bool>(true));
 
-    Func<Task> act = async () => await _areaService.Delete(areaId);
+    Func<Task> act = async () => await _concursoService.Delete(concursoId);
 
     await act.Should().NotThrowAsync();
   }
@@ -83,13 +82,14 @@ public class ConcursoServiceTest
   [Fact]
   public async Task DeleteConcurso_NotFoundConcurso_ShouldThrowWarning()
   {
-    var areaId = _concurso.Id;
+    var concursoId = _concurso.Id;
 
-    A.CallTo(() => _concursoRepository.GetById(areaId)).Returns(Task.FromResult<Concurso?>(null));
+    A.CallTo(() => _concursoRepository.GetById(concursoId))
+      .Returns(Task.FromResult<Concurso?>(null));
 
     try
     {
-      await _areaService.Delete(areaId);
+      await _concursoService.Delete(concursoId);
     }
     catch (Exception ex)
     {
@@ -102,13 +102,13 @@ public class ConcursoServiceTest
   public async Task PatchConcurso_updateSucessfully_ShouldReturnConcurso()
   {
     var updateConcursoDTO = new UpdateConcursoDto();
-    var areaId = _concurso.Id;
+    var concursoId = _concurso.Id;
 
-    A.CallTo(() => _concursoRepository.GetById(areaId))
+    A.CallTo(() => _concursoRepository.GetById(concursoId))
       .Returns(Task.FromResult<Concurso?>(_concurso));
-    A.CallTo(() => _concursoRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _concursoRepository.Edit(_concurso)).Returns(Task.FromResult<bool>(true));
 
-    var result = await _areaService.Patch(areaId, updateConcursoDTO);
+    var result = await _concursoService.Patch(concursoId, updateConcursoDTO);
 
     result.Should().Be(_concurso);
   }
@@ -123,7 +123,7 @@ public class ConcursoServiceTest
       .Returns(Task.FromResult<Concurso?>(null));
     try
     {
-      var result = await _areaService.Patch(quesitonId, updateConcursoDTO);
+      var result = await _concursoService.Patch(quesitonId, updateConcursoDTO);
     }
     catch (Exception ex)
     {
@@ -132,28 +132,14 @@ public class ConcursoServiceTest
   }
 
   [Fact]
-  public async Task CreateConcurso_ShouldReturnMultipleChoiceConcurso_WhenCreateConcursoWithChoices()
+  public async Task CreateConcurso_ShouldReturnConcurso_WhenCreateConcurso()
   {
-    var areaDTO = new CreateConcursoDto() { Name = "Petrobras", };
+    var concursoDTO = new CreateConcursoDto() { Name = "Petrobras", };
 
-    A.CallTo(() => _concursoRepository.Add(_concurso));
-    A.CallTo(() => _concursoRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _instituteService.GetById(_institute.Id)).Returns(Task.FromResult(_institute));
+    A.CallTo(() => _concursoRepository.Add(A<Concurso>._)).Returns(Task.FromResult<bool>(true));
 
-    var result = await _areaService.Create(areaDTO);
-
-    result?.Name.Should().Be(_concurso.Name);
-    result.Should().BeOfType<Concurso>();
-  }
-
-  [Fact]
-  public async Task CreateConcurso_ShouldReturnBooleanConcurso_WhenCreateConcursoWithoutChoices()
-  {
-    var areaDTO = new CreateConcursoDto() { Name = "Petrobras", };
-
-    A.CallTo(() => _concursoRepository.Add(_concurso));
-    A.CallTo(() => _concursoRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
-
-    var result = await _areaService.Create(areaDTO);
+    var result = await _concursoService.Create(concursoDTO);
 
     result?.Name.Should().Be(_concurso.Name);
     result.Should().BeOfType<Concurso>();

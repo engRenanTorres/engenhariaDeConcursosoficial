@@ -59,17 +59,28 @@ public class QuestionController : ControllerBase
   [HttpPost]
   public async Task<ActionResult> Create(CreateQuestionDTO questionDto)
   {
-    var question = await _questionService.Create(questionDto);
+    Question question = await _questionService.Create(questionDto);
     var actionName = nameof(GetFullById);
     var LastIdCreated = await _questionService.GetLastId();
+    var userDto = new UserDto()
+    {
+      DisplayName = question.InsertedBy?.DisplayName ?? "",
+      Id = question.InsertedBy?.Id ?? "",
+    };
+    ViewQuestionDto viewQuestion = ParseToView(question, LastIdCreated, userDto);
+    return CreatedAtAction(actionName, new { Id = LastIdCreated }, viewQuestion);
+  }
+
+  private static ViewQuestionDto ParseToView(Question question, int LastIdCreated, UserDto userDto)
+  {
     var jsonQuestion = new ViewQuestionDto()
     {
       Id = LastIdCreated,
       Answer = (question as ChoicesQuestion)?.Answer ?? char.Parse(""),
       Body = question.Body,
-      EditedBy = new() { DisplayName = question.EditedBy?.DisplayName ?? "", },
+      //EditedBy = userDto,
       InsertedAt = question.InsertedAt,
-      InsertedBy = new() { DisplayName = question.InsertedBy?.DisplayName ?? "" },
+      InsertedBy = userDto,
       LastUpdatedAt = question.LastUpdatedAt,
       Tip = question.Tip,
       Choices = (question as ChoicesQuestion)?.Choices ?? new List<Choice>(),
@@ -78,7 +89,7 @@ public class QuestionController : ControllerBase
       StudyArea = question.Subject?.StudyArea?.Name ?? "",
       Level = question.QuestionLevel?.Name ?? ""
     };
-    return CreatedAtAction(actionName, new { Id = LastIdCreated }, jsonQuestion);
+    return jsonQuestion;
   }
 
   [Authorize(Roles = "Admin")]

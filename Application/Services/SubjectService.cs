@@ -70,7 +70,7 @@ public class SubjectService : ISubjectService
     {
       return subject;
     }
-    throw new DatabaseException("Erro ao salvar a questão");
+    throw new DatabaseException("Error saving");
   }
 
   public async Task Delete(Guid id)

@@ -14,6 +14,7 @@ public class SubjectServiceTest
   private readonly ISubjectRepository _subjectRepository;
   private readonly ILogger<ISubjectService> _logger;
   private readonly ISubjectService _subjectService;
+  private readonly IGenericRepository<Subject> _genericRepository;
   private readonly IAreaService _areaService;
   private readonly StudyArea _studyArea =
     new()
@@ -36,6 +37,7 @@ public class SubjectServiceTest
       StudyArea = _studyArea,
     };
     _subjectDto = new() { Name = _subject.Name, };
+    _genericRepository = A.Fake<IGenericRepository<Subject>>();
     _subjectRepository = A.Fake<ISubjectRepository>();
     _areaService = A.Fake<IAreaService>();
     _logger = A.Fake<ILogger<ISubjectService>>();
@@ -74,8 +76,7 @@ public class SubjectServiceTest
 
     A.CallTo(() => _subjectRepository.GetById(subjectId))
       .Returns(Task.FromResult<Subject?>(_subject));
-    A.CallTo(() => _subjectRepository.Remove(_subject));
-    A.CallTo(() => _subjectRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _subjectRepository.Remove(_subject)).Returns(Task.FromResult<bool>(true));
 
     Func<Task> act = async () => await _subjectService.Delete(subjectId);
 
@@ -108,7 +109,7 @@ public class SubjectServiceTest
 
     A.CallTo(() => _subjectRepository.GetById(subjectId))
       .Returns(Task.FromResult<Subject?>(_subject));
-    A.CallTo(() => _subjectRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _subjectRepository.Edit(_subject)).Returns(Task.FromResult<bool>(true));
 
     var result = await _subjectService.Patch(subjectId, updateSubjectDTO);
 
@@ -133,27 +134,12 @@ public class SubjectServiceTest
   }
 
   [Fact]
-  public async Task CreateSubject_ShouldReturnMultipleChoiceSubject_WhenCreateSubjectWithChoices()
+  public async Task CreateSubject_ShouldReturnSubject_WhenCreateSubject()
   {
     var subjectDTO = new CreateSubjectDto() { Name = "Estruturas", AreaId = _studyArea.Id };
 
-    A.CallTo(() => _subjectRepository.Add(_subject));
-    A.CallTo(() => _subjectRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
-
-    var result = await _subjectService.Create(subjectDTO);
-
-    result?.Name.Should().Be(_subject.Name);
-    result.Should().BeOfType<Subject>();
-  }
-
-  [Fact]
-  public async Task CreateSubject_ShouldReturnBooleanSubject_WhenCreateSubjectWithoutChoices()
-  {
-    var subjectDTO = new CreateSubjectDto() { Name = "Estruturas", AreaId = _studyArea.Id };
-
-    A.CallTo(() => _subjectRepository.Add(_subject));
-    //A.CallTo(() => _userService.GetUser(int.Parse(userId))).Returns(Task.FromResult<User?>(_user));
-    A.CallTo(() => _subjectRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _areaService.GetById(_studyArea.Id)).Returns(Task.FromResult(_studyArea));
+    A.CallTo(() => _subjectRepository.Add(A<Subject>._)).Returns(Task.FromResult(true));
 
     var result = await _subjectService.Create(subjectDTO);
 

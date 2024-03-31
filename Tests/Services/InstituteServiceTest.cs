@@ -13,7 +13,7 @@ public class InstituteServiceTest
 {
   private readonly IInstituteRepository _instituteRepository;
   private readonly ILogger<IInstituteService> _logger;
-  private readonly IInstituteService _areaService;
+  private readonly IInstituteService _instituteService;
   private readonly Institute _institute =
     new()
     {
@@ -34,7 +34,7 @@ public class InstituteServiceTest
     };
     _instituteRepository = A.Fake<IInstituteRepository>();
     _logger = A.Fake<ILogger<IInstituteService>>();
-    _areaService = new InstituteService(_instituteRepository, _logger);
+    _instituteService = new InstituteService(_instituteRepository, _logger);
   }
 
   [Fact]
@@ -43,7 +43,7 @@ public class InstituteServiceTest
     var id = _institute.Id;
     A.CallTo(() => _instituteRepository.GetById(id)).Returns(Task.FromResult(_institute));
 
-    var result = await _areaService.GetById(id);
+    var result = await _instituteService.GetById(id);
 
     result?.Should().BeOfType<Institute>();
     result?.Should().BeSameAs(_institute);
@@ -52,27 +52,26 @@ public class InstituteServiceTest
   [Fact]
   public async Task GetAllInstitute_BDContainTheInstitute_ShouldReturnInstitutes()
   {
-    var areas = new List<Institute> { _institute };
-    A.CallTo(() => _instituteRepository.GetAll()).Returns(areas);
+    var institutes = new List<Institute> { _institute };
+    A.CallTo(() => _instituteRepository.GetAll()).Returns(institutes);
 
-    var result = await _areaService.GetAll();
+    var result = await _instituteService.GetAll();
 
     result?.Should().BeOfType<List<Institute>>();
 
-    result?.Should().BeSameAs(areas);
+    result?.Should().BeSameAs(institutes);
   }
 
   [Fact]
   public async Task DeleteInstitute_BDContainTheInstitute_ShouldNotThrow()
   {
-    var areaId = _institute.Id;
+    var instituteId = _institute.Id;
 
-    A.CallTo(() => _instituteRepository.GetById(areaId))
+    A.CallTo(() => _instituteRepository.GetById(instituteId))
       .Returns(Task.FromResult<Institute?>(_institute));
-    A.CallTo(() => _instituteRepository.Remove(_institute));
-    A.CallTo(() => _instituteRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _instituteRepository.Remove(_institute)).Returns(Task.FromResult<bool>(true));
 
-    Func<Task> act = async () => await _areaService.Delete(areaId);
+    Func<Task> act = async () => await _instituteService.Delete(instituteId);
 
     await act.Should().NotThrowAsync();
   }
@@ -80,13 +79,14 @@ public class InstituteServiceTest
   [Fact]
   public async Task DeleteInstitute_NotFoundInstitute_ShouldThrowWarning()
   {
-    var areaId = _institute.Id;
+    var instituteId = _institute.Id;
 
-    A.CallTo(() => _instituteRepository.GetById(areaId)).Returns(Task.FromResult<Institute?>(null));
+    A.CallTo(() => _instituteRepository.GetById(instituteId))
+      .Returns(Task.FromResult<Institute?>(null));
 
     try
     {
-      await _areaService.Delete(areaId);
+      await _instituteService.Delete(instituteId);
     }
     catch (Exception ex)
     {
@@ -99,13 +99,13 @@ public class InstituteServiceTest
   public async Task PatchInstitute_updateSucessfully_ShouldReturnInstitute()
   {
     var updateInstituteDTO = new UpdateInstituteDto();
-    var areaId = _institute.Id;
+    var instituteId = _institute.Id;
 
-    A.CallTo(() => _instituteRepository.GetById(areaId))
+    A.CallTo(() => _instituteRepository.GetById(instituteId))
       .Returns(Task.FromResult<Institute?>(_institute));
-    A.CallTo(() => _instituteRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _instituteRepository.Edit(_institute)).Returns(Task.FromResult<bool>(true));
 
-    var result = await _areaService.Patch(areaId, updateInstituteDTO);
+    var result = await _instituteService.Patch(instituteId, updateInstituteDTO);
 
     result.Should().Be(_institute);
   }
@@ -120,7 +120,7 @@ public class InstituteServiceTest
       .Returns(Task.FromResult<Institute?>(null));
     try
     {
-      var result = await _areaService.Patch(quesitonId, updateInstituteDTO);
+      var result = await _instituteService.Patch(quesitonId, updateInstituteDTO);
     }
     catch (Exception ex)
     {
@@ -129,28 +129,13 @@ public class InstituteServiceTest
   }
 
   [Fact]
-  public async Task CreateInstitute_ShouldReturnMultipleChoiceInstitute_WhenCreateInstituteWithChoices()
+  public async Task CreateInstitute_ShouldReturnInstitute_WhenCreateInstitute()
   {
-    var areaDTO = new CreateInstituteDto() { Name = "Cebraspe", };
+    var instituteDTO = new CreateInstituteDto() { Name = "Cebraspe", };
 
-    A.CallTo(() => _instituteRepository.Add(_institute));
-    A.CallTo(() => _instituteRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _instituteRepository.Add(A<Institute>._)).Returns(Task.FromResult<bool>(true));
 
-    var result = await _areaService.Create(areaDTO);
-
-    result?.Name.Should().Be(_institute.Name);
-    result.Should().BeOfType<Institute>();
-  }
-
-  [Fact]
-  public async Task CreateInstitute_ShouldReturnBooleanInstitute_WhenCreateInstituteWithoutChoices()
-  {
-    var areaDTO = new CreateInstituteDto() { Name = "Cebraspe", };
-
-    A.CallTo(() => _instituteRepository.Add(_institute));
-    A.CallTo(() => _instituteRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
-
-    var result = await _areaService.Create(areaDTO);
+    var result = await _instituteService.Create(instituteDTO);
 
     result?.Name.Should().Be(_institute.Name);
     result.Should().BeOfType<Institute>();

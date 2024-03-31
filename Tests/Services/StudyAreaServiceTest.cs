@@ -69,8 +69,7 @@ public class StudyAreaServiceTest
 
     A.CallTo(() => _studyAreaRepository.GetById(areaId))
       .Returns(Task.FromResult<StudyArea?>(_studyArea));
-    A.CallTo(() => _studyAreaRepository.Remove(_studyArea));
-    A.CallTo(() => _studyAreaRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _studyAreaRepository.Remove(_studyArea)).Returns(Task.FromResult<bool>(true));
 
     Func<Task> act = async () => await _areaService.Delete(areaId);
 
@@ -103,7 +102,7 @@ public class StudyAreaServiceTest
 
     A.CallTo(() => _studyAreaRepository.GetById(areaId))
       .Returns(Task.FromResult<StudyArea?>(_studyArea));
-    A.CallTo(() => _studyAreaRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _studyAreaRepository.Edit(_studyArea)).Returns(Task.FromResult<bool>(true));
 
     var result = await _areaService.Patch(areaId, updateAreaDTO);
 
@@ -129,27 +128,11 @@ public class StudyAreaServiceTest
   }
 
   [Fact]
-  public async Task CreateArea_ShouldReturnMultipleChoiceArea_WhenCreateAreaWithChoices()
+  public async Task CreateArea_ShouldReturnArea_WhenCreateArea()
   {
     var areaDTO = new CreateAreaDto() { Name = "EngCivil", };
 
-    A.CallTo(() => _studyAreaRepository.Add(_studyArea));
-    A.CallTo(() => _studyAreaRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
-
-    var result = await _areaService.Create(areaDTO);
-
-    result?.Name.Should().Be(_studyArea.Name);
-    result.Should().BeOfType<StudyArea>();
-  }
-
-  [Fact]
-  public async Task CreateArea_ShouldReturnBooleanArea_WhenCreateAreaWithoutChoices()
-  {
-    var areaDTO = new CreateAreaDto() { Name = "EngCivil", };
-
-    A.CallTo(() => _studyAreaRepository.Add(_studyArea));
-    //A.CallTo(() => _userService.GetUser(int.Parse(userId))).Returns(Task.FromResult<User?>(_user));
-    A.CallTo(() => _studyAreaRepository.SaveChanges()).Returns(Task.FromResult<bool>(true));
+    A.CallTo(() => _studyAreaRepository.Add(_studyArea)).Returns(Task.FromResult<bool>(true));
 
     var result = await _areaService.Create(areaDTO);
 

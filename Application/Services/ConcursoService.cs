@@ -59,8 +59,8 @@ public class ConcursoService : IConcursoService
         CreatedAt = DateTime.Now,
         Institute = institute
       };
-
-    if (await _concursoRepository.Add(concurso))
+    var didSave = await _concursoRepository.Add(concurso);
+    if (didSave)
     {
       return concurso;
     }
