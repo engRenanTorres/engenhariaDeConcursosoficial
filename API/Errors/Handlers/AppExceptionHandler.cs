@@ -22,8 +22,9 @@ public class AppExceptionHandler : IExceptionHandler
         ExceptionMessage = ex?.Message,
         StackTrace = exception?.StackTrace?.ToString()
       };
+
+      httpContext.Response.StatusCode = (int)statusCode;
       await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
-      httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
       return true;
     }
     else

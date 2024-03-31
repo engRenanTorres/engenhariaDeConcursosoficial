@@ -80,6 +80,7 @@ public static class ApplicationServiceExtensions
         options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
       );
 
+    // TODO: Use Mapster and remove AutoMapper
     services.AddAutoMapper(typeof(MappingProfile).Assembly);
     services.AddExceptionHandler<API.Errors.Handler.AppExceptionHandler>();
     services.AddHttpContextAccessor();

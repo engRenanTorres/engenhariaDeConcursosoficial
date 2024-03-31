@@ -31,6 +31,8 @@ builder.Services.AddIdentityServices(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+// TODO: Isolate builder services
+// TODO: Create Exam Class
 //Repos
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuestionLevelRepository, QuestionLevelRepository>();
@@ -78,7 +80,7 @@ else
 
 //app.UseHttpsRedirection();
 
-app.UseExceptionHandler("/Error"); // TODO: fix exceptionhandler
+app.UseExceptionHandler(("/Error"));
 
 app.UseAuthentication();
 app.UseAuthorization();
