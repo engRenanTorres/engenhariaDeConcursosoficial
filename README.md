@@ -1,6 +1,6 @@
 # App web fullstack do Projeto Engenharia de Concursos
 
-Monorepo using turbo build for Reactjs vite in Frontend and Nestjs in backend.
+Monorepo using turbo build for Reactjs vite in Frontend and .NET in backend.
 This application has been developed to manage the questions for the Engenharia de Concursos project. The primary objective of this project is to assist individuals to be approved in publics exams in Brazil.
 
 ## Tecnologies and Frameworks
